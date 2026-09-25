@@ -10,6 +10,7 @@ import { state } from '../state.js';
 import { albaniaNow } from '../i18n.js';
 import { pathFor } from '../routes.js';
 import { vcard } from '../../shared/vcard.js';
+import { RATE_GROUPS } from '../../shared/settings.js';
 import { qrElement } from './qr.js';
 
 export const site = { email: '', live: new Set(), whatsapp: '', availability: null, links: [], rates: null, portrait: null, graphic: [], quotes: [], greta: null, counted: false, inbox: false };
@@ -56,6 +57,25 @@ export function money(n, currency, lang) {
   const s = String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, lang === 'en' ? ',' : '.');
   if (currency === 'EUR') return lang === 'en' ? `€${s}` : `${s}${NBSP}€`;
   return lang === 'sq' ? `${s}${NBSP}lekë` : `${s}${NBSP}ALL`;
+}
+
+/** What a rate is per, in this language: its own unit, else a month for the care each month; '' when it is paid once. */
+export const perOf = (T, lang, it) => pick(it.unit, lang) || (it.group === 'monthly' ? T.rateMonth : '');
+
+/** A rate's price as the card sets it: "from €150" (its unit, "/ month", is set apart). */
+export const priceOnly = (T, lang, it) => `${it.from ? `${T.rateFrom} ` : ''}${money(it.price, site.rates.currency, lang)}`;
+
+/** A rate's price with its unit, as one line of text: "from €10 / month". */
+export function priceText(T, lang, it) {
+  const per = perOf(T, lang, it);
+  return per ? `${priceOnly(T, lang, it)} / ${per}` : priceOnly(T, lang, it);
+}
+
+/** The rates as the card lays them out: those in no group first, then each group in the card's order; each rate with its place in the list. */
+export function rateGroups(items) {
+  const groups = new Map([['', []], ...RATE_GROUPS.map((g) => [g, []])]);
+  items.forEach((it, i) => groups.get(RATE_GROUPS.includes(it.group) ? it.group : '').push([it, i]));
+  return [...groups].filter(([, list]) => list.length);
 }
 
 /** +355 69 000 0000 for an Albanian number; +digits for any other. */
@@ -112,18 +132,27 @@ function paintRates(T, lang) {
   const on = has('rates') && !!site.rates && site.rates.items.length > 0;
   sec.hidden = !on;
   if (!on) return;
-  const list = sec.querySelector('[data-rates-list]');
-  list.replaceChildren(...site.rates.items.map((it) => {
+  const rate = (it) => {
     const li = el('li', 'rate');
     const desc = pick(it.desc, lang);
-    li.append(
-      el('span', 'rate__name', pick(it.name, lang)),
-      el('span', 'rate__leader'),
-      el('span', 'rate__price', `${it.from ? `${T.rateFrom} ` : ''}${money(it.price, site.rates.currency, lang)}`),
-    );
-    li.lastElementChild.previousElementSibling.setAttribute('aria-hidden', 'true');
+    const leader = el('span', 'rate__leader');
+    leader.setAttribute('aria-hidden', 'true');
+    const price = el('span', 'rate__price', priceOnly(T, lang, it));
+    const per = perOf(T, lang, it);
+    if (per) price.append(el('span', 'rate__per', ` / ${per}`));
+    li.append(el('span', 'rate__name', pick(it.name, lang)), leader, price);
     if (desc) li.append(el('span', 'rate__desc', desc));
     return li;
+  };
+  // each group under its head; the rates in no group lead the card without one
+  sec.querySelector('[data-rates-list]').replaceChildren(...rateGroups(site.rates.items).flatMap(([group, list]) => {
+    const ol = el('ol', 'ratecard__list');
+    ol.append(...list.map(([it]) => rate(it)));
+    if (!group) return [ol];
+    const head = el('h3', 'ratecard__group', T.rateGroups[group]);
+    head.id = `rates-${group}`;
+    ol.setAttribute('aria-labelledby', head.id);
+    return [head, ol];
   }));
   const note = pick(site.rates.note, lang);
   const noteEl = sec.querySelector('[data-rates-note]');

@@ -5,7 +5,7 @@ Request (Luca, 2026-09-23): "Based on the finding make a new website portfolio f
 
 ## Confirmed (see PRODUCT.md)
 - Stack: Vite + three.js + GSAP. GSAP ticker is the ONLY rAF: drives Lenis (autoRaf false) and the WebGL render. matter/physics stepped from the same ticker if used.
-- Audience: businesses needing a designer. Facts allowed: based in Albania (Albania-time clock ok, no city), EN + SQ, placeholder email hello@example.invalid. NO services list. No other clients/years/metrics.
+- Audience: businesses needing a designer. Facts allowed: based in Albania (Albania-time clock ok, no city), EN + SQ, email stefanodoko19@icloud.com (typed in the admin; the HTML keeps the placeholder). NO services list. No other clients/years/metrics.
 - Evidence: elixir.al, barmartiri.com; screenshots in LC/claude-site/work/{elixir,martiri}-{desktop,phone}.jpg (copy into this project).
 - Build path: code-first (.impeccable/config.json).
 - Mode: Experience (portfolio), with a persuade-grade contact path.

@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   // One Worker for the whole site: the static build in dist/ plus worker/ (settings in
   // every page, the admin panel's API, the telegram inbox, the portrait).
-  "name": "stefano-doko",
+  "name": "sdesign",
   "main": "worker/index.js",
   "compatibility_date": "2026-09-15",
   "assets": {
@@ -16,7 +16,7 @@
   // Settings, the portrait and the telegrams. `npm run worker:dev` simulates this in
   // .wrangler/state. Before the first deploy: npx wrangler kv namespace create SITE,
   // and put the id it prints here (it is not a secret).
-  "kv_namespaces": [{ "binding": "SITE", "id": "00000000000000000000000000000000" }],
+  "kv_namespaces": [{ "binding": "SITE", "id": "63d22783535a425b950aec5c19db4e62" }],
   // Secrets, never in this file: SESSION_SECRET and ADMIN_PASSWORD_HASH
   // (npx wrangler secret put ...; locally they live in .dev.vars, which git ignores).
   "workers_dev": true,

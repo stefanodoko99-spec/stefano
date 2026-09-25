@@ -96,7 +96,7 @@ r = await req('PUT', '/api/admin/settings', {
     rates: {
       currency: 'ALL', note: { en: 'Test note', sq: 'Shënim prove' },
       items: [
-        { name: { en: 'Test rate', sq: 'Çmim prove' }, desc: { en: 'A test', sq: 'Një provë' }, price: '12 000', from: true },
+        { name: { en: 'Test rate', sq: 'Çmim prove' }, desc: { en: 'A test', sq: 'Një provë' }, price: '12 000', from: true, group: 'extras', unit: { en: '  photo ', sq: 'foto' } },
         { name: { en: '', sq: '' }, desc: { en: '', sq: '' }, price: '' },
       ],
     },
@@ -112,6 +112,7 @@ check(r.status === 200, 'a full save is kept', JSON.stringify(r.data).slice(0, 2
 const saved = r.data.settings || {};
 check(saved.whatsapp === '355690000000', 'the number is stored as digits', saved.whatsapp);
 check(saved.rates?.items?.length === 1 && saved.rates.items[0].price === 12000, 'the blank rate row is dropped, the price read as 12000');
+check(saved.rates?.items?.[0]?.group === 'extras' && saved.rates.items[0].unit?.en === 'photo' && saved.rates.items[0].unit?.sq === 'foto', 'a rate keeps its group and its unit, trimmed', JSON.stringify(saved.rates?.items?.[0]));
 check(saved.greta?.url === 'https://greta.example.com/', 'the link is made https', saved.greta?.url);
 check(saved.portrait?.key === before.portrait.key, 'a portrait file cannot be set by a save');
 const st = r.data.status || {};

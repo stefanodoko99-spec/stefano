@@ -1074,6 +1074,13 @@ ol, ul { padding: 0; list-style: none; }
 .rate__price { font: 900 26px/1 var(--display); font-stretch: 78%; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
 .rate__desc { grid-column: 1 / -1; font: 400 14.5px/1.5 var(--text); color: var(--fade); }
 .ratecard__note { margin: 14px 0 0; font: 400 13.5px/1.5 var(--text); color: var(--fade); }
+/* a card in groups: each group's head over its rates, ruled like the strip */
+.ratecard__group {
+  margin: 28px 0 0; padding-bottom: 10px; border-bottom: 1px solid var(--ink);
+  font: 800 13px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
+}
+/* what a price is per ("/ month"), quieter than the price */
+.rate__per { font: 400 14px/1 var(--text); font-stretch: normal; letter-spacing: 0; color: var(--fade); }
 
 /* the portrait: a plate beside the verse, engraved by the stage; the sheet holds it */
 .sheet--about:has(> .portrait:not([hidden])) { display: flow-root; }
@@ -1096,6 +1103,12 @@ ol, ul { padding: 0; list-style: none; }
 }
 .calc__sum { font: 900 34px/1 var(--display); font-stretch: 76%; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums lining-nums; }
 .calc__note { margin: 12px 0 18px; max-width: 62ch; font: 400 13.5px/1.5 var(--text); color: var(--fade); }
+/* the calculator's groups, named as on the card */
+.calc__group { min-width: 0; margin: 0; padding: 0; border: 0; }
+.calc__head {
+  width: 100%; padding: 22px 0 9px; border-bottom: 1px solid var(--ink);
+  font: 800 12.5px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
+}
 
 /* graphic work: plates on a sheet of their own after the websites, each in its own
    shape (a logo square, a poster tall), in columns that start level */

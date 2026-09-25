@@ -23,8 +23,14 @@ export const TOKEN_RE = /^[a-f0-9]{32}$/i;
 
 export const LIMITS = {
   email: 120, itemName: 60, itemDesc: 180, note: 240, quote: 600, person: 60, business: 80,
-  caption: 160, url: 200, rates: 12, quotes: 12, price: 100000000, graphic: 12, title: 80, client: 80,
+  caption: 160, url: 200, rates: 24, unit: 30, quotes: 12, price: 100000000, graphic: 12, title: 80, client: 80,
 };
+
+// The groups a rate may stand under on the card, in the card's order: the
+// websites, what can be added to them, the care each month, and the work of a
+// season. A rate in no group stands at the top of the card, as every rate did
+// before there were groups.
+export const RATE_GROUPS = ['sites', 'extras', 'monthly', 'season'];
 
 export const CURRENCIES = ['ALL', 'EUR'];
 
@@ -137,13 +143,16 @@ export function clean(input, current = defaults()) {
   (Array.isArray(rates.items) ? rates.items : []).slice(0, LIMITS.rates).forEach((it) => {
     const name = langs(it?.name, LIMITS.itemName);
     const desc = langs(it?.desc, LIMITS.itemDesc);
+    // what the price is per ("photo"); a rate in "monthly" is per month without one
+    const unit = langs(it?.unit, LIMITS.unit);
     const rawPrice = typeof it?.price === 'number' ? it.price : line(it?.price, 16);
-    if (!anyLang(name) && !anyLang(desc) && rawPrice === '') return; // a blank row
+    if (!anyLang(name) && !anyLang(desc) && !anyLang(unit) && rawPrice === '') return; // a blank row
     const i = out.rates.items.length;
     const p = price(rawPrice);
     if (!name.en && !name.sq) errors[`rates.items.${i}.name`] = 'required';
     if (p === null) errors[`rates.items.${i}.price`] = 'price';
-    out.rates.items.push({ id: cleanId(it?.id), name, desc, price: p ?? 0, from: it?.from === true });
+    const group = RATE_GROUPS.includes(it?.group) ? it.group : '';
+    out.rates.items.push({ id: cleanId(it?.id), name, desc, price: p ?? 0, from: it?.from === true, group, unit });
   });
 
   const kept = cur.portrait && typeof cur.portrait === 'object' ? cur.portrait : {};
@@ -240,7 +249,7 @@ export function publicView(s) {
       ? {
           currency: s.rates.currency,
           note: s.rates.note,
-          items: s.rates.items.filter((i) => i.name.en || i.name.sq).map(({ name, desc, price: p, from }) => ({ name, desc, price: p, from })),
+          items: s.rates.items.filter((i) => i.name.en || i.name.sq).map(({ name, desc, price: p, from, group, unit }) => ({ name, desc, price: p, from, group, unit })),
         }
       : null,
     portrait: on('portrait') ? { src: `/${s.portrait.key}`, w: s.portrait.w, h: s.portrait.h, caption: s.portrait.caption } : null,

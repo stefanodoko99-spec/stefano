@@ -175,6 +175,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .adm-item__head { padding: 0 6px; font: 800 13px/1 var(--display); letter-spacing: 0.1em; text-transform: uppercase; }
 .adm-item__row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0 28px; }
 .adm-item__row .adm-field { flex: 1 1 220px; }
+/* a choice in a rate's row (its group) keeps to its field, whatever its longest option */
+.adm-item__row .adm-input--select { width: 100%; }
 .adm-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-top: 10px; }
 .adm-confirm { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; font: 400 15.5px/1.4 var(--text); }
 

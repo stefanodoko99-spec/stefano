@@ -9,6 +9,6 @@ Print and social pieces in the site's broadside style (Anybody, Ultra and Old St
 
 Upload the slides in order, 1 to 5.
 
-- **Prices** are "from" prices for Albania, estimated on 2026-09-23. They are not confirmed rates; change them in the HTML before publishing.
-- **Placeholder:** the email `hello@example.invalid`, on the flyer and on slide 5.
+- **Prices** are "from" prices for Albania, estimated on 2026-09-23. They are not confirmed rates; change them in the HTML before publishing. The website's rate card takes its prices from the admin, not from here.
+- **Email:** `stefanodoko19@icloud.com`, on the flyer and on slide 5.
 - **Bleed:** the flyer PDF is exact A5 with no bleed. If the print shop trims, ask whether they need 3 mm added.

@@ -312,6 +312,9 @@ export function createStage(canvas) {
     }, { passive: true });
     window.addEventListener('pointercancel', () => { down = null; }, { passive: true });
   }
+  // a desktop re-cuts the band at 30 fps; a phone every frame, up to about
+  // 60 fps (every other frame on a 120 Hz screen), so the van drives smoothly
+  const bandEvery = state.mobile ? 1 / 75 : 1 / 30;
   let lastScroll = -1, lastRX = NaN, lastRY = NaN, lastRV = false, bandAcc = 1, forced = 2;
   // the engraving's sun is set where the sun stands over Albania, again each half minute
   let sunAt = -Infinity;
@@ -563,7 +566,8 @@ export function createStage(canvas) {
     }
 
     // Draw only when something changed. The engraving itself is re-cut at
-    // 30 fps (it moves slowly), or every frame while the pointer works it.
+    // 30 fps on a desktop and every frame on a phone (bandEvery), or every
+    // frame while the pointer works it.
     // A canvas on the page needs nothing for a scroll alone: what it drew
     // moves with the page.
     const scrolled = !onPage && state.scroll !== lastScroll;
@@ -586,7 +590,7 @@ export function createStage(canvas) {
       });
     }
     const leaning = !!br && lean(dt);
-    const bandDue = !!br && (forced > 0 || band.morphing || (!state.reduced && (insideBand || tilt.moving || bandAcc >= 1 / 30)));
+    const bandDue = !!br && (forced > 0 || band.morphing || (!state.reduced && (insideBand || tilt.moving || bandAcc >= bandEvery)));
     // the brayer moved here, or has gone from here to a case sheet
     const brayerChanged = brayerHere ? f.brayerMoved : pageBrayer;
     if (!(scrolled || anchored || bandDue || f.stirring || f.stirred || f.platesChanged || brayerChanged || forced > 0)) return;

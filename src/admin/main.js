@@ -11,7 +11,8 @@ import { T, lang, setLang, fill, when } from './strings.js';
 import { resizePhoto } from './image.js';
 import { qrFile } from '../ui/qr.js';
 import { vcard } from '../../shared/vcard.js';
-import { FEATURES, CURRENCIES, LANGS, LINKS, LIMITS, clean, status as statusOf, newId, digits, isEmail, EMAIL_RE } from '../../shared/settings.js';
+import { FEATURES, CURRENCIES, LANGS, LINKS, LIMITS, RATE_GROUPS, clean, status as statusOf, newId, digits, isEmail, EMAIL_RE } from '../../shared/settings.js';
+import { MENU, MENU_CURRENCY } from './menu.js';
 
 const app = document.getElementById('app');
 const PANELS = ['overview', 'contact', 'rates', 'portrait', 'graphic', 'quotes', 'greta', 'visits', 'telegrams'];
@@ -430,28 +431,51 @@ function rates() {
   const R = T().rates;
   const r = S.draft.rates;
   const list = h('div', { class: 'adm-list' });
+  // where the rate stands on the card: in no group (the top), or under one of the card's heads
+  const groupSelect = (it) => h('select', { class: 'adm-input adm-input--select', onchange: (e) => { it.group = e.target.value; changed(); } },
+    ['', ...RATE_GROUPS].map((g) => h('option', { value: g, selected: (it.group || '') === g ? true : null, text: R.groups[g || 'none'] })));
   const paint = () => {
-    list.replaceChildren(...(r.items.length ? r.items.map((it, i) => h('fieldset', { class: 'adm-item' },
-      h('legend', { class: 'adm-item__head', text: fill(R.item, { n: i + 1 }) }),
-      pair({ id: `rate-${it.id}-name`, label: R.name, obj: it.name, max: LIMITS.itemName, path: `rates.items.${i}.name` }),
-      pair({ id: `rate-${it.id}-desc`, label: R.desc, obj: it.desc, max: LIMITS.itemDesc }),
-      h('div', { class: 'adm-item__row' },
-        field({ id: `rate-${it.id}-price`, label: `${R.price} (${r.currency})`, path: `rates.items.${i}.price`, control: input(it.price === 0 && !it.name.en && !it.name.sq ? '' : String(it.price ?? ''), (v) => { it.price = v; }, { inputmode: 'numeric', maxlength: '14' }) }),
-        h('label', { class: 'adm-check-input' },
-          h('input', { type: 'checkbox', checked: it.from === true, onchange: (e) => { it.from = e.target.checked; changed(); } }),
-          h('span', { text: R.from }))),
-      listButtons(r.items, i, paint))) : [h('p', { class: 'adm-help', text: R.empty })]));
+    list.replaceChildren(...(r.items.length ? r.items.map((it, i) => {
+      if (!it.unit) it.unit = blankLangs();
+      return h('fieldset', { class: 'adm-item' },
+        h('legend', { class: 'adm-item__head', text: fill(R.item, { n: i + 1 }) }),
+        pair({ id: `rate-${it.id}-name`, label: R.name, obj: it.name, max: LIMITS.itemName, path: `rates.items.${i}.name` }),
+        pair({ id: `rate-${it.id}-desc`, label: R.desc, obj: it.desc, max: LIMITS.itemDesc }),
+        h('div', { class: 'adm-item__row' },
+          field({ id: `rate-${it.id}-group`, label: R.group, control: groupSelect(it) }),
+          field({ id: `rate-${it.id}-price`, label: `${R.price} (${r.currency})`, path: `rates.items.${i}.price`, control: input(it.price === 0 && !it.name.en && !it.name.sq ? '' : String(it.price ?? ''), (v) => { it.price = v; }, { inputmode: 'numeric', maxlength: '14' }) }),
+          h('label', { class: 'adm-check-input' },
+            h('input', { type: 'checkbox', checked: it.from === true, onchange: (e) => { it.from = e.target.checked; changed(); } }),
+            h('span', { text: R.from }))),
+        pair({ id: `rate-${it.id}-unit`, label: R.unit, obj: it.unit, max: LIMITS.unit, helpText: R.unitHelp }),
+        listButtons(r.items, i, paint));
+    }) : [h('p', { class: 'adm-help', text: R.empty })]));
     add.disabled = r.items.length >= LIMITS.rates;
-    add.title = add.disabled ? R.max : '';
+    add.title = add.disabled ? fill(R.max, { n: LIMITS.rates }) : '';
+    menu.hidden = r.items.length > 0;
     refreshChrome();
   };
   const add = h('button', {
     type: 'button', class: 'adm-btn adm-btn--line',
-    onclick: () => { r.items.push({ id: newId(), name: blankLangs(), desc: blankLangs(), price: '', from: false }); changed(); paint(); list.lastElementChild?.querySelector('input')?.focus(); },
+    // a new rate goes in the group of the one before it, so a group is typed in a row
+    onclick: () => { r.items.push({ id: newId(), name: blankLangs(), desc: blankLangs(), unit: blankLangs(), price: '', from: false, group: r.items.at(-1)?.group || '' }); changed(); paint(); list.lastElementChild?.querySelector('input')?.focus(); },
     text: R.add,
   });
   const currency = h('select', { class: 'adm-input adm-input--select', onchange: (e) => { r.currency = e.target.value; changed(); paint(); } },
     CURRENCIES.map((c) => h('option', { value: c, selected: r.currency === c ? true : null, text: c })));
+  // an empty card can take the flyer's menu as a draft, to read through and save
+  const menu = h('div', { class: 'adm-field' },
+    h('button', {
+      type: 'button', class: 'adm-btn adm-btn--line', 'aria-describedby': 'rates-menu-help',
+      onclick: () => {
+        r.items = MENU.map((it) => ({ id: newId(), ...copy(it) }));
+        r.currency = MENU_CURRENCY;
+        currency.value = MENU_CURRENCY;
+        changed(); paint(); list.querySelector('input')?.focus();
+      },
+      text: R.fillMenu,
+    }),
+    help('rates-menu-help', R.fillMenuHelp));
   paint();
   return h('section', {},
     h1(R.head),
@@ -460,6 +484,7 @@ function rates() {
     field({ id: 'currency', label: R.currency, control: currency }),
     pair({ id: 'rates-note', label: R.note, obj: r.note, max: LIMITS.note, helpText: R.noteHelp }),
     list,
+    menu,
     add);
 }
 

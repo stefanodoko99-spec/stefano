@@ -7,7 +7,7 @@ import puppeteer from 'puppeteer-core';
 const dir = path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '$1'));
 const browser = await puppeteer.launch({
   headless: 'new',
-  executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe',
+  executablePath: process.env.CHROME || (process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : 'C:/Program Files/Google/Chrome/Application/chrome.exe'),
   args: ['--allow-file-access-from-files'],
 });
 const page = await browser.newPage();

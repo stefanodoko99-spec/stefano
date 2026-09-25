@@ -86,7 +86,7 @@ In the Claude app the launch entries are `stefano-doko` (3670), `stefano-doko-pr
   ```
 
   Then `npm run build` and `npx wrangler deploy`. Never set `DEV_LOGIN` on the deployed Worker (it is ignored off localhost anyway). The domain is added to the Worker in the Cloudflare dashboard.
-- **Email.** The real address has not arrived yet. Type it in the admin (Contact): the Worker then writes it into every sheet as it is served. The HTML keeps the placeholder `hello@example.invalid` (in `partials/chrome.html`, `partials/foot.html`, `index.html`, `contact/index.html` and `404.html`), which is what a page served without the Worker shows; to change that too, replace every match. The flyer and the business card carry the placeholder separately (see Print and brand).
+- **Email.** The address is `stefanodoko19@icloud.com` (given 2026-09-24). Type it in the admin (Contact): the Worker then writes it into every sheet as it is served. The HTML keeps the placeholder `hello@example.invalid` (in `partials/chrome.html`, `partials/foot.html`, `index.html`, `contact/index.html` and `404.html`), which is what a page served without the Worker shows; to change that too, replace every match. The flyer and the business card carry the placeholder separately (see Print and brand).
 - **Domain.** Build with the domain set. `tools/build-sq.mjs` then makes canonical, hreflang, `og:url` and `og:image` absolute on all twenty-four sheets, writes `dist/sitemap.xml` and adds it to `dist/robots.txt`. Without it the links stay root-relative and there is no sitemap. Don't leave a build made with a test domain in `dist/`.
 
   ```bash
@@ -165,7 +165,7 @@ The optional parts, each off until switched on in the admin:
 | Profile links: Instagram, Facebook, LinkedIn and Behance at the foot of every sheet and on the contact page (`rel="me"`, and `sameAs` in the Person) | `src/ui/site.js`, `shared/settings.js` (`LINKS`) |
 | Save to contacts: a button for the card, and on a wider screen its QR code; the admin downloads the code as an SVG for print | `src/ui/site.js`, `src/ui/qr.js`, `shared/vcard.js` |
 | Readers write: client quotes as letters to the editor, before About | `src/ui/site.js`, `#quotes` in `index.html` |
-| The rates: a telegraph office's tariff, after the websites | `src/ui/site.js`, `#rates` in `index.html` |
+| The rates: a telegraph office's tariff, after the websites; up to 24 rates, in no group or under Websites, Add-ons, Every month and Once a season, each maybe per something ("/ photo"); the admin can fill an empty card with the flyer's menu (`src/admin/menu.js`) | `src/ui/site.js`, `partials/sheet-rates.html`, `RATE_GROUPS` in `shared/settings.js` |
 | The price calculator: under the rates, the visitor ticks lines and sees them add up (an estimate, not an offer), then sends the list, which opens the telegram with it written in | `src/ui/calculator.js`, `?rates=` in `src/ui/telegram.js` |
 | Portrait: a photo on the About sheet, printed as an engraving, the loupe shows the photograph | `src/ui/portrait.js` |
 | Graphic work: pieces uploaded in the admin, each with its title, client and year, on a sheet after the websites, printed as engravings that develop into colour; only pieces the client allows | `src/ui/graphic.js`, `#graphic` in `index.html` |

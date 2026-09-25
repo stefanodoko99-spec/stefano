@@ -6,7 +6,7 @@
 // estimate from the card, not an offer.
 import { state, bus } from '../state.js';
 import { pathFor } from '../routes.js';
-import { site, has, money, pick } from './site.js';
+import { site, has, money, pick, priceText, priceOnly, perOf, rateGroups } from './site.js';
 
 const el = (tag, cls, text) => {
   const e = document.createElement(tag);
@@ -15,12 +15,21 @@ const el = (tag, cls, text) => {
   return e;
 };
 
-const priceOf = (T, lang, it) => `${it.from ? `${T.rateFrom} ` : ''}${money(it.price, site.rates.currency, lang)}`;
+const priceOf = priceText;
 
-/** The ticked rates' total: "from" when any of them is a starting price. */
+/**
+ * The ticked rates' total: "from" when any of them is a starting price. The
+ * care each month is added up apart ("from €1,350 + €40 / month"), and a rate
+ * priced per photo or per product counts once, so it makes a starting price.
+ */
 export function totalText(T, lang, items) {
-  const sum = items.reduce((a, it) => a + it.price, 0);
-  return `${items.some((it) => it.from) ? `${T.rateFrom} ` : ''}${money(sum, site.rates.currency, lang)}`;
+  const sum = (list) => {
+    const from = list.some((it) => it.from || (it.group !== 'monthly' && perOf(T, lang, it)));
+    return `${from ? `${T.rateFrom} ` : ''}${money(list.reduce((a, it) => a + it.price, 0), site.rates.currency, lang)}`;
+  };
+  const once = items.filter((it) => it.group !== 'monthly');
+  const monthly = items.filter((it) => it.group === 'monthly');
+  return [once.length ? sum(once) : '', monthly.length ? `${sum(monthly)} / ${T.rateMonth}` : ''].filter(Boolean).join(' + ');
 }
 
 /** The ticked rates (their places on the card) as a telegram's first lines, in the page's language. */
@@ -54,8 +63,8 @@ export function initCalculator() {
     const T = state.T;
     const lang = state.lang;
     const ticked = new Set(picked());
-    const legend = list.querySelector('legend');
-    list.replaceChildren(legend, ...site.rates.items.map((it, i) => {
+    const legend = list.querySelector(':scope > legend');
+    const line = (it, i) => {
       const row = el('label', 'calc__item');
       const box = el('input');
       box.type = 'checkbox';
@@ -64,8 +73,19 @@ export function initCalculator() {
       box.checked = ticked.has(i);
       const leader = el('span', 'calc__leader');
       leader.setAttribute('aria-hidden', 'true');
-      row.append(box, el('span', 'calc__name', pick(it.name, lang)), leader, el('span', 'calc__price', priceOf(T, lang, it)));
+      // the price as on the card: its unit set apart, quieter
+      const price = el('span', 'calc__price', priceOnly(T, lang, it));
+      const per = perOf(T, lang, it);
+      if (per) price.append(el('span', 'rate__per', ` / ${per}`));
+      row.append(box, el('span', 'calc__name', pick(it.name, lang)), leader, price);
       return row;
+    };
+    // grouped as on the card, each group a set of its own that names it
+    list.replaceChildren(legend, ...rateGroups(site.rates.items).flatMap(([group, rows]) => {
+      if (!group) return rows.map(([it, i]) => line(it, i));
+      const set = el('fieldset', 'calc__group');
+      set.append(el('legend', 'calc__head', T.rateGroups[group]), ...rows.map(([it, i]) => line(it, i)));
+      return [set];
     }));
     update();
   };

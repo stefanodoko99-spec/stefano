@@ -294,6 +294,11 @@ async function boot() {
 
   await intro.done;
   lenis?.start();
+  // A phone scrolls natively (Lenis smooths only the wheel), yet Lenis still
+  // listens to every touch with non-passive handlers, which makes Safari wait
+  // on the page before it moves the scroll: a busy frame then held the finger.
+  // Once the intro no longer needs touches held back, those listeners go.
+  if (lenis && !state.fine) lenis.virtualScroll.destroy();
   stage?.primePlates();
   if (location.hash) gsap.delayedCall(0.1, () => scrollToHash(location.hash));
 }

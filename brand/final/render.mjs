@@ -9,7 +9,7 @@ const dir = path.dirname(new URL(import.meta.url).pathname.replace(/^\/(\w:)/, '
 const url = (f) => pathToFileURL(path.join(dir, f)).href;
 const out = (...p) => { const f = path.join(dir, 'export', ...p); fs.mkdirSync(path.dirname(f), { recursive: true }); return f; };
 
-const browser = await puppeteer.launch({ headless: 'new', executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', args: ['--allow-file-access-from-files'] });
+const browser = await puppeteer.launch({ headless: 'new', executablePath: process.env.CHROME || (process.platform === 'darwin' ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' : 'C:/Program Files/Google/Chrome/Application/chrome.exe'), args: ['--allow-file-access-from-files'] });
 const page = await browser.newPage();
 
 // raster copies of SVGs: an HTML wrapper on disk, so file:// images are allowed to load

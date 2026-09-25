@@ -33,4 +33,4 @@ Liquid cursor â†’ wet ink stirred in the band. Cursor reveal and frozen glass â†
 
 ## Unresolved
 
-Real email (placeholder until Luca sends it). Print services (identities, posters, menus): not stated until confirmed. Web design and development were confirmed by Luca on 2026-09-23 and now have their own sheet.
+Email: stefanodoko19@icloud.com (given 2026-09-24), typed in the admin (Contact); the HTML keeps the placeholder that the Worker replaces. Print services (identities, posters, menus): not stated until confirmed. Web design and development were confirmed by Luca on 2026-09-23 and now have their own sheet.
