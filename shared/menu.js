@@ -1,7 +1,11 @@
-// The menu of the flyer and the Instagram carousel ("Menuja", flyer/instagram.html),
-// as rates for the card: the rates panel offers it while its list is empty, as
-// a draft to read through and save. The Albanian is the carousel's own; the
-// English and the Italian say the same. Every price is a starting price, in euros.
+// The menu ("Menuja"): every service and its starting price, in euros, the
+// same 24 lines as the flyers and the Instagram carousel (flyer/menuja.html,
+// flyer/instagram.html). The site's rate card starts from it (shared/settings.js
+// defaults), and the admin's rates panel can put it back as a draft. The
+// Albanian is the flyers' own; the English and the Italian say the same.
+// Five lines were added on 2026-09-25 at estimated prices, not confirmed: fixing
+// a site, the full identity, the flyer or poster, the posting calendar and the
+// email campaign.
 const r = (group, price, name, desc, unit) => ({ group, price, from: true, name, desc, unit: unit || { en: '', sq: '', it: '' } });
 
 export const MENU_CURRENCY = 'EUR';
@@ -22,6 +26,36 @@ export const MENU = [
   r('sites', 2500,
     { en: 'The shop with a panel', sq: 'Dyqani me panel', it: 'Il negozio con pannello' },
     { en: 'A panel for products and orders, an email for every order, and card payments through the bank.', sq: 'Panel për produktet dhe porositë, email për çdo porosi, pagesë me kartë përmes bankës.', it: 'Un pannello per prodotti e ordini, un’email per ogni ordine, pagamento con carta tramite la banca.' }),
+  r('sites', 80,
+    { en: 'Fixing a site', sq: 'Rregullimi i faqes', it: 'Sistemare un sito' },
+    { en: 'For the site you already have: faster, right on the phone, and found on Google.', sq: 'Për faqen që ke tashmë: më e shpejtë, e rregullt në telefon dhe që gjendet në Google.', it: 'Per il sito che hai già: più veloce, a posto sul telefono e trovato su Google.' }),
+
+  r('design', 100,
+    { en: 'Logo', sq: 'Logo', it: 'Logo' },
+    { en: 'A simple logo in the business’s own colours and letters.', sq: 'Logo e thjeshtë me ngjyrat dhe shkronjat e biznesit.', it: 'Un logo semplice con i colori e le lettere dell’attività.' }),
+  r('design', 250,
+    { en: 'The full identity', sq: 'Identiteti i plotë', it: 'L’identità completa' },
+    { en: 'Logo, colours, type, a brand guide and the business card.', sq: 'Logo, ngjyrat, shkronjat, udhëzuesi i markës dhe kartëvizita.', it: 'Logo, colori, caratteri, una guida del marchio e il biglietto da visita.' }),
+  r('design', 50,
+    { en: 'Menu for print', sq: 'Menu për shtyp', it: 'Menù da stampare' },
+    { en: 'For the bar or the restaurant, ready for the printer.', sq: 'Për barin ose restorantin, gati për shtypshkronjën.', it: 'Per il bar o il ristorante, pronto per la tipografia.' }),
+  r('design', 40,
+    { en: 'Flyer or poster', sq: 'Fletushkë ose poster', it: 'Volantino o poster' },
+    { en: 'Ready for the printer, as a PDF.', sq: 'Gati për shtypshkronjën, në PDF.', it: 'Pronto per la tipografia, in PDF.' }),
+  r('design', 50,
+    { en: 'Instagram templates', sq: 'Shabllone për Instagram', it: 'Modelli per Instagram' },
+    { en: 'Posts in the business’s style, ready to fill in.', sq: 'Postime me stilin e biznesit, gati për t’i mbushur.', it: 'Post nello stile dell’attività, pronti da riempire.' }),
+
+  r('marketing', 30,
+    { en: 'Google profile', sq: 'Profili në Google', it: 'Profilo su Google' },
+    { en: 'Your Google Maps profile, opened and verified.', sq: 'Hapja dhe verifikimi i profilit në Google Maps.', it: 'Apertura e verifica del profilo su Google Maps.' }),
+  r('marketing', 50,
+    { en: 'Posting calendar', sq: 'Kalendari i postimeve', it: 'Calendario dei post' },
+    { en: 'The month’s posts planned, with the captions written.', sq: 'Plani i postimeve të muajit, me tekstet gati.', it: 'I post del mese pianificati, con i testi pronti.' },
+    { en: 'month', sq: 'muaj', it: 'mese' }),
+  r('marketing', 40,
+    { en: 'Email campaign', sq: 'Fushatë me email', it: 'Campagna email' },
+    { en: 'The words and the design of one email to the business’s customers.', sq: 'Teksti dhe dizajni i një email-i për klientët e biznesit.', it: 'Testo e grafica di un’email ai clienti dell’attività.' }),
 
   r('extras', 80,
     { en: 'Another language', sq: 'Gjuhë shtesë', it: 'Un’altra lingua' },
@@ -29,12 +63,6 @@ export const MENU = [
   r('extras', 30,
     { en: 'Another page', sq: 'Faqe shtesë', it: 'Un’altra pagina' },
     { en: 'A service, an offer or a new page.', sq: 'Një shërbim, një ofertë ose një faqe e re.', it: 'Un servizio, un’offerta o una pagina nuova.' }),
-  r('extras', 100,
-    { en: 'Logo', sq: 'Logo', it: 'Logo' },
-    { en: 'A simple logo in the business’s own colours and letters.', sq: 'Logo e thjeshtë me ngjyrat dhe shkronjat e biznesit.', it: 'Un logo semplice con i colori e le lettere dell’attività.' }),
-  r('extras', 50,
-    { en: 'Menu for print', sq: 'Menu për shtyp', it: 'Menù da stampare' },
-    { en: 'For the bar or the restaurant, ready for the printer.', sq: 'Për barin ose restorantin, gati për shtypshkronjën.', it: 'Per il bar o il ristorante, pronto per la tipografia.' }),
   r('extras', 50,
     { en: 'Product upload', sq: 'Ngarkim produktesh', it: 'Caricamento prodotti' },
     { en: 'Products put into the shop, with name, price and description.', sq: 'Produktet në dyqan, me emër, çmim dhe përshkrim.', it: 'I prodotti nel negozio, con nome, prezzo e descrizione.' },
@@ -43,12 +71,6 @@ export const MENU = [
     { en: 'Product photos', sq: 'Fotot e produkteve', it: 'Foto dei prodotti' },
     { en: 'The background taken out and the photo cleaned, so the whole shop looks alike.', sq: 'Heqja e sfondit dhe pastrimi, që dyqani të duket i njëjtë.', it: 'Sfondo rimosso e foto ripulita, perché il negozio sembri tutto uguale.' },
     { en: 'photo', sq: 'foto', it: 'foto' }),
-  r('extras', 30,
-    { en: 'Google profile', sq: 'Profili në Google', it: 'Profilo su Google' },
-    { en: 'Your Google Maps profile, opened and verified.', sq: 'Hapja dhe verifikimi i profilit në Google Maps.', it: 'Apertura e verifica del profilo su Google Maps.' }),
-  r('extras', 50,
-    { en: 'Instagram templates', sq: 'Shabllone për Instagram', it: 'Modelli per Instagram' },
-    { en: 'Posts in the business’s style, ready to fill in.', sq: 'Postime me stilin e biznesit, gati për t’i mbushur.', it: 'Post nello stile dell’attività, pronti da riempire.' }),
 
   r('monthly', 10,
     { en: 'Maintenance', sq: 'Mirëmbajtja', it: 'Manutenzione' },

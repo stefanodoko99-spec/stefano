@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Opens on http://localhost:3670. `npm run build` runs `vite build` and then `node tools/build-sq.mjs`, which writes the Albanian and the Italian twin of every sheet, so `dist/` holds twenty-four sheets (eight in each language), `404.html` and the admin. `npm run preview` serves the build on port 3671. Neither runs the Worker, so both show the bare sheet: every optional part off, the placeholder email, the telegram handed to the mail app.
+Opens on http://localhost:3670. `npm run build` runs `vite build` and then `node tools/build-sq.mjs`, which writes the Albanian and the Italian twin of every sheet, so `dist/` holds twenty-four sheets (eight in each language), `404.html` and the admin. `npm run preview` serves the build on port 3671. Neither runs the Worker, so both show the sheet a fresh admin starts from: the rate card with the menu, every other optional part off, the placeholder email, the telegram handed to the mail app.
 
 With the Worker:
 
@@ -95,7 +95,7 @@ In the Claude app the launch entries are `stefano-doko` (3670), `stefano-doko-pr
 
   In PowerShell: `$env:SITE_URL='https://the-domain'; npm run build`.
 - **Contact form.** Served by the Worker, it posts the telegram to the admin's inbox (Telegrams, with an unread count), and the privacy note on the page says the site keeps it. Served without the Worker, it hands the telegram to the visitor's own mail app and nothing is stored. Nobody is notified of a new telegram: someone has to look in the admin.
-- **The optional parts.** All fourteen are off. Each shows once it is switched on in the admin and has what it needs; the admin's overview says which are live and what each is waiting for. Everything they show is typed or uploaded there: prices, quotes (with permission), the portrait, pieces of graphic work (with the client's permission), the number, the month he is free from, his profile addresses, Greta's link, the Web Analytics token. Every text has a box per language; an empty Italian box shows the English.
+- **The optional parts.** All but the rate card are off; the rate card starts on, with the menu (`shared/menu.js`, since 2026-09-26), until the admin changes it. Each shows once it is switched on in the admin and has what it needs; the admin's overview says which are live and what each is waiting for. Everything they show is typed or uploaded there: prices, quotes (with permission), the portrait, pieces of graphic work (with the client's permission), the number, the month he is free from, his profile addresses, Greta's link, the Web Analytics token. Every text has a box per language; an empty Italian box shows the English.
 - **The Italian.** Have an Italian speaker read it (`STRINGS.it` in `src/i18n.js`, the Italian boxes in the admin) before it is announced.
 - **Awwwards.** `SUBMISSION.md` holds the entry (title, description, the one signature, what to send) and what has to be true before it goes.
 - **Dresses by Greta.** When its domain exists, type it in the admin (Greta) and switch the link on; add facts only from what its live site says, and re-shoot its plates: `node tools/shoot-work.mjs greta-home greta-phone`, then `python tools/embed-plates.py`.
@@ -123,7 +123,7 @@ Where it draws depends on who scrolls the page. With a mouse, Lenis scrolls it i
 | Cursor reveal, frozen glass | a printer's loupe over each work plate: magnified true colour, a glass rim that bends the image | `src/gl/plates.js` |
 | One 3D object riding the scroll | the brayer, a hand ink roller drawn with the engraving material | `src/gl/brayer.js`, `src/ui/ink.js` |
 | Outline-to-fill headline | each sheet head is uninked type until the roller passes | `src/ui/ink.js`, `.ink` in `src/style.css` |
-| Scroll-drawn line | the Elixir van drives down every sheet as it is read, keeping to a reading line, and paints its road red behind it: down a margin, across the page in the clear strips between parts (never over a word), under the running line; the way ahead is dotted in. Laid out from the page and moved on the compositor by a ScrollTimeline (the one clock where there is none), so it never trails a phone's scroll. The verse's column rule draws down as the words take ink | `src/ui/road.js`, `src/ui/verse.js` |
+| Scroll-driven | the road: five lanes between the front page's sheets, a big red road drawn across each as it rises up the screen, the engraving's own van laying it, one lane one way and the next the other. The van is printed once by the stage from the band's (`vanSprite`); the road is drawn by a window sliding over it while it slides back inside, and all of it is laid out from the page and moved on the compositor by a ScrollTimeline (the one clock where there is none), so it never trails a phone's scroll. The verse's column rule draws down as the words take ink | `src/ui/road.js`, `src/gl/stage.js`, `src/ui/verse.js` |
 | HUD labels | lettered callouts with leader rules out to the details of each screenshot | `src/ui/cases.js`, leaders inside the plates in `src/gl/plates.js` |
 | Grid glitch transition | type-case tiles, black and red a hair out of register, while the language is re-set | `src/ui/tiles.js` |
 | Pinned case exhibit | each case sheet is held while it develops, then the next sheet is laid over it and the read one fades | `src/ui/cases.js`, `.stack` in `src/style.css` |
@@ -165,7 +165,7 @@ The optional parts, each off until switched on in the admin:
 | Profile links: Instagram, Facebook, LinkedIn and Behance at the foot of every sheet and on the contact page (`rel="me"`, and `sameAs` in the Person) | `src/ui/site.js`, `shared/settings.js` (`LINKS`) |
 | Save to contacts: a button for the card, and on a wider screen its QR code; the admin downloads the code as an SVG for print | `src/ui/site.js`, `src/ui/qr.js`, `shared/vcard.js` |
 | Readers write: client quotes as letters to the editor, before About | `src/ui/site.js`, `#quotes` in `index.html` |
-| The rates: a telegraph office's tariff, after the websites; up to 24 rates, in no group or under Websites, Add-ons, Every month and Once a season, each maybe per something ("/ photo"); the admin can fill an empty card with the flyer's menu (`src/admin/menu.js`) | `src/ui/site.js`, `partials/sheet-rates.html`, `RATE_GROUPS` in `shared/settings.js` |
+| The rates: the menu, after the websites, a tab for each group; up to 24 rates, in no group or under Websites, Design, Marketing, Add-ons, Every month and Once a season, each maybe per something ("/ photo"). It starts on with the flyers' menu (`shared/menu.js`), which the admin can also put back | `src/ui/site.js`, `partials/sheet-rates.html`, `RATE_GROUPS` in `shared/settings.js` |
 | The price calculator: under the rates, the visitor ticks lines and sees them add up (an estimate, not an offer), then sends the list, which opens the telegram with it written in | `src/ui/calculator.js`, `?rates=` in `src/ui/telegram.js` |
 | Portrait: a photo on the About sheet, printed as an engraving, the loupe shows the photograph | `src/ui/portrait.js` |
 | Graphic work: pieces uploaded in the admin, each with its title, client and year, on a sheet after the websites, printed as engravings that develop into colour; only pieces the client allows | `src/ui/graphic.js`, `#graphic` in `index.html` |
@@ -230,7 +230,7 @@ Vite never reads these folders. Their renderers use the same `puppeteer-core`.
 
 - `brand/final/` is the identity: the SD mark (a black S and a red D shaped like a speech bubble), its colours and type, and the rules in `guide.html`. `python brand/final/make.py && node brand/final/render.mjs` writes the logo SVGs in `logo/` and every export in `export/`: logo PNGs, favicons, Instagram posts, the link preview and the business card PDFs (`export/print/`). The site's favicons and `og.png` are copies of `export/web/` with an origin note embedded (`impeccable embed-prompt`). `python brand/final/highlights.py` makes the Instagram highlight covers.
 - `brand/make_logo.py`, `brand/render.mjs` and `brand/v2/` to `brand/v8/` are the earlier logo studies.
-- `flyer/` holds the A5 flyer (`node flyer/render.mjs`) and the five-slide Instagram carousel (`node flyer/render-instagram.mjs`). Their prices are estimates Luca has not confirmed, and they carry the placeholder email.
+- `flyer/` holds the A5 flyer (`node flyer/render.mjs`), the two-sided A5 menu flyer with all 24 lines of the menu (`node flyer/render-menuja.mjs`, with a bleed PDF for the printer) and the seven-slide Instagram carousel (`node flyer/render-instagram.mjs`), all in the modern edition. Their prices are estimates Luca has not confirmed, and they carry the real email, `stefanodoko19@icloud.com`.
 - The business card (`brand/final/templates/card.html`) still has placeholders on the back: email, phone, web address and Instagram handle.
 
 ## Type

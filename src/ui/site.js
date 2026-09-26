@@ -3,14 +3,15 @@
 // the sheet they switch on: WhatsApp, availability, his profiles, his card,
 // the rate card, the letters, the portrait's caption, the graphic work,
 // Greta's link, and the privacy lines (the inbox, the visit counter). A page
-// served without the Worker has no settings, and every optional part stays as
-// it was built: off. Everything shown here was typed in the admin; it is put
-// on the page as text, never as HTML.
+// served without the Worker has no settings of its own: it takes the ones a
+// fresh admin starts from, so the rate card shows the menu and every other
+// optional part stays off. Everything shown here was typed in the admin or is
+// the menu (shared/menu.js); it is put on the page as text, never as HTML.
 import { state } from '../state.js';
 import { albaniaNow } from '../i18n.js';
 import { pathFor } from '../routes.js';
 import { vcard } from '../../shared/vcard.js';
-import { RATE_GROUPS } from '../../shared/settings.js';
+import { RATE_GROUPS, defaults, publicView } from '../../shared/settings.js';
 import { qrElement } from './qr.js';
 
 export const site = { email: '', live: new Set(), whatsapp: '', availability: null, links: [], rates: null, portrait: null, graphic: [], quotes: [], greta: null, counted: false, inbox: false };
@@ -21,22 +22,24 @@ const LINK_NAMES = { instagram: 'Instagram', facebook: 'Facebook', linkedin: 'Li
 
 export function readSite() {
   const el = document.getElementById('site-settings');
-  if (!el) return site;
+  let s;
   try {
-    const s = JSON.parse(el.textContent);
-    site.email = typeof s.email === 'string' ? s.email : '';
-    site.live = new Set(Array.isArray(s.live) ? s.live : []);
-    site.whatsapp = typeof s.whatsapp === 'string' && /^\d{8,15}$/.test(s.whatsapp) ? s.whatsapp : '';
-    site.availability = s.availability && /^\d{4}-(0[1-9]|1[0-2])$/.test(s.availability.from || '') ? s.availability : null;
-    site.links = Array.isArray(s.links) ? s.links.filter((l) => LINK_NAMES[l?.kind] && /^https:\/\//.test(l.url || '')) : [];
-    site.rates = s.rates && Array.isArray(s.rates.items) ? s.rates : null;
-    site.portrait = s.portrait && typeof s.portrait.src === 'string' && s.portrait.src.startsWith('/media/') ? s.portrait : null;
-    site.graphic = Array.isArray(s.graphic) ? s.graphic.filter((g) => typeof g?.src === 'string' && g.src.startsWith('/media/')) : [];
-    site.quotes = Array.isArray(s.quotes) ? s.quotes : [];
-    site.greta = s.greta && /^https:\/\//.test(s.greta.url || '') ? s.greta : null;
-    site.counted = s.counted === true;
-    site.inbox = s.inbox === true;
+    // without the Worker: a fresh admin's settings, and no inbox to post a telegram to
+    s = el ? JSON.parse(el.textContent) : { ...publicView(defaults()), inbox: false };
   } catch { /* settings that do not read leave the page as it was built */ }
+  if (!s || typeof s !== 'object') return site;
+  site.email = typeof s.email === 'string' ? s.email : '';
+  site.live = new Set(Array.isArray(s.live) ? s.live : []);
+  site.whatsapp = typeof s.whatsapp === 'string' && /^\d{8,15}$/.test(s.whatsapp) ? s.whatsapp : '';
+  site.availability = s.availability && /^\d{4}-(0[1-9]|1[0-2])$/.test(s.availability.from || '') ? s.availability : null;
+  site.links = Array.isArray(s.links) ? s.links.filter((l) => LINK_NAMES[l?.kind] && /^https:\/\//.test(l.url || '')) : [];
+  site.rates = s.rates && Array.isArray(s.rates.items) ? s.rates : null;
+  site.portrait = s.portrait && typeof s.portrait.src === 'string' && s.portrait.src.startsWith('/media/') ? s.portrait : null;
+  site.graphic = Array.isArray(s.graphic) ? s.graphic.filter((g) => typeof g?.src === 'string' && g.src.startsWith('/media/')) : [];
+  site.quotes = Array.isArray(s.quotes) ? s.quotes : [];
+  site.greta = s.greta && /^https:\/\//.test(s.greta.url || '') ? s.greta : null;
+  site.counted = s.counted === true;
+  site.inbox = s.inbox === true;
   return site;
 }
 
@@ -126,6 +129,9 @@ function paintAvailability(T) {
   });
 }
 
+// the group the menu shows, kept when the language changes
+let shownGroup = null;
+
 function paintRates(T, lang) {
   const sec = document.querySelector('[data-optional="rates"]');
   if (!sec) return;
@@ -137,23 +143,73 @@ function paintRates(T, lang) {
     const desc = pick(it.desc, lang);
     const leader = el('span', 'rate__leader');
     leader.setAttribute('aria-hidden', 'true');
-    const price = el('span', 'rate__price', priceOnly(T, lang, it));
+    // "from" set small before the price, as on the flyers
+    const price = el('span', 'rate__price');
+    if (it.from) price.append(el('span', 'rate__from', `${T.rateFrom} `));
+    price.append(money(it.price, site.rates.currency, lang));
     const per = perOf(T, lang, it);
     if (per) price.append(el('span', 'rate__per', ` / ${per}`));
     li.append(el('span', 'rate__name', pick(it.name, lang)), leader, price);
     if (desc) li.append(el('span', 'rate__desc', desc));
     return li;
   };
-  // each group under its head; the rates in no group lead the card without one
-  sec.querySelector('[data-rates-list]').replaceChildren(...rateGroups(site.rates.items).flatMap(([group, list]) => {
+  // The menu, compact: a tab for each group (the rates in no group first,
+  // under the card's own name), one group's list shown at a time. The lists
+  // share one place on the card, so it keeps the height of the longest and
+  // nothing under it moves as the tabs change.
+  const groups = rateGroups(site.rates.items);
+  const tabs = sec.querySelector('[data-rates-tabs]');
+  const panels = groups.map(([group, list]) => {
+    const panel = el('div', 'ratecard__panel');
+    panel.id = `rates-${group || 'top'}`;
     const ol = el('ol', 'ratecard__list');
     ol.append(...list.map(([it]) => rate(it)));
-    if (!group) return [ol];
-    const head = el('h3', 'ratecard__group', T.rateGroups[group]);
-    head.id = `rates-${group}`;
-    ol.setAttribute('aria-labelledby', head.id);
-    return [head, ol];
-  }));
+    panel.append(ol);
+    return panel;
+  });
+  sec.querySelector('[data-rates-list]').replaceChildren(...panels);
+  tabs.hidden = groups.length < 2;
+  if (groups.length < 2) {
+    tabs.replaceChildren();
+    panels[0].classList.add('is-shown');
+  } else {
+    tabs.setAttribute('role', 'tablist');
+    tabs.setAttribute('aria-label', T.ratesKind);
+    const buttons = groups.map(([group, list], i) => {
+      const b = el('button', 'ratecard__tab');
+      b.type = 'button';
+      b.id = `rates-tab-${group || 'top'}`;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-controls', panels[i].id);
+      b.append(el('span', '', group ? T.rateGroups[group] : T.ratesKind), el('span', 'ratecard__n', String(list.length)));
+      panels[i].setAttribute('role', 'tabpanel');
+      panels[i].setAttribute('aria-labelledby', b.id);
+      panels[i].tabIndex = 0;
+      return b;
+    });
+    const select = (i, focus) => {
+      shownGroup = groups[i][0];
+      buttons.forEach((b, j) => { b.setAttribute('aria-selected', String(i === j)); b.tabIndex = i === j ? 0 : -1; });
+      panels.forEach((p, j) => { p.classList.toggle('is-shown', i === j); p.inert = i !== j; });
+      if (focus) buttons[i].focus({ preventScroll: true });
+      // on a narrow card the row of tabs runs sideways: the chosen one is brought into it
+      const b = buttons[i];
+      if (tabs.scrollWidth > tabs.clientWidth) tabs.scrollTo({ left: Math.max(0, b.offsetLeft - (tabs.clientWidth - b.offsetWidth) / 2), behavior: state.reduced ? 'auto' : 'smooth' });
+    };
+    buttons.forEach((b, i) => {
+      b.addEventListener('click', () => select(i));
+      // the arrow keys move along the tabs, Home and End to either end
+      b.addEventListener('keydown', (e) => {
+        const n = buttons.length;
+        const to = { ArrowRight: (i + 1) % n, ArrowLeft: (i + n - 1) % n, Home: 0, End: n - 1 }[e.key];
+        if (to === undefined) return;
+        e.preventDefault();
+        select(to, true);
+      });
+    });
+    tabs.replaceChildren(...buttons);
+    select(Math.max(0, groups.findIndex(([g]) => g === shownGroup)));
+  }
   const note = pick(site.rates.note, lang);
   const noteEl = sec.querySelector('[data-rates-note]');
   noteEl.textContent = note;

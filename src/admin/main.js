@@ -12,7 +12,7 @@ import { resizePhoto } from './image.js';
 import { qrFile } from '../ui/qr.js';
 import { vcard } from '../../shared/vcard.js';
 import { FEATURES, CURRENCIES, LANGS, LINKS, LIMITS, RATE_GROUPS, clean, status as statusOf, newId, digits, isEmail, EMAIL_RE } from '../../shared/settings.js';
-import { MENU, MENU_CURRENCY } from './menu.js';
+import { MENU, MENU_CURRENCY } from '../../shared/menu.js';
 
 const app = document.getElementById('app');
 const PANELS = ['overview', 'contact', 'rates', 'portrait', 'graphic', 'quotes', 'greta', 'visits', 'telegrams'];

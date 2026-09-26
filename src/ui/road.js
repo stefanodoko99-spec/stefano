@@ -1,333 +1,235 @@
-// The road (Luca, 2026-09-25: "when scrolling, a red path for the car, and it
-// follows the path, on PC and mobile"). The Elixir van from the engraving
-// drives down the sheet as it is read, and the road it has driven is painted
-// red behind it; the way still ahead is dotted in. The road keeps to the
-// margin beside the sheets and crosses the page only where two parts of it
-// leave the whole width clear, so it never runs over a word. The van keeps to
-// a reading line on the screen; on a crossing it slows, turns with the road
-// and drives across, then catches up.
+// The road (2026-09-26: "a big red road with the van, and the road being made
+// as I scroll"). Between the front page's sheets lie lanes (index.html,
+// .lane). In each, a red road crosses the page on a long S, and the band's
+// own van drives it as the lane passes up the screen, laying the road behind
+// it: what is behind the van is drawn, what is ahead is bare paper. The lanes
+// run one way and the next the other, as one road down the page would, its
+// turns off the page's edges.
 //
-// Everything is worked out from the laid-out page (layout()) as a list of
-// scroll positions, and handed to the browser as keyframes on a ScrollTimeline:
-// the van and the painted road then move on the compositor with the scroll
-// itself, so they never trail the page (a phone scrolls the page between this
-// script's frames). Where there is no ScrollTimeline, the one clock moves
-// them (update()). With the press stopped the road is shown whole, and no van.
+// Everything is worked out from the laid-out page (layout()) as scroll
+// positions and handed to the browser as keyframes on a ScrollTimeline: the
+// road and the van move by transform alone, on the compositor, with the
+// scroll itself, so on a phone they keep pace with the finger. The road is
+// drawn out by a window sliding over it while the road inside slides back the
+// same way, so it stands still as it appears. Where there is no ScrollTimeline
+// the one clock moves them (update()). Without the band's van (no WebGL) the
+// roads lie drawn and empty; with the press stopped, drawn, with the van
+// parked halfway across each.
 import gsap from 'gsap';
 import { state, bus } from '../state.js';
 
-// what is set on the page, whose height a crossing must not cut through
-const SOLID = [
-  'p', 'h1', 'h2', 'h3', 'li', 'figure', 'img', 'canvas', 'button', 'a', 'input', 'textarea', 'label', 'table', 'svg',
-  '[data-fit]', '.fan', '.band', '.marquee', '.typecase', '.telegram', '.ratecard', '.card', '.gallery', '.letter', '.game',
-].map((s) => `main ${s}`).join(', ');
+const SVG = 'http://www.w3.org/2000/svg';
+const STEPS = 32; // keyframes along one crossing
+// the lane's middle at these heights of the screen: the van sets out, and has crossed
+const FROM = 0.94;
+const TO = 0.16;
 
-const VAN = `<svg class="van__car" viewBox="-4 -2 36 54" aria-hidden="true" focusable="false">
-  <rect class="van__body" x="0" y="0" width="28" height="50" rx="7"/>
-  <path class="van__ribs" d="M6 6.5h16M6 11h16M6 15.5h16M6 20h16"/>
-  <rect class="van__stripe" x="4.5" y="24" width="19" height="4" rx="1.5"/>
-  <path class="van__glass" d="M4 33h20l-2.2 6.5H6.2z"/>
-  <path class="van__bonnet" d="M6 45.5h16"/>
-  <rect class="van__mirror" x="-3.2" y="33.6" width="4.2" height="3" rx="1.2"/>
-  <rect class="van__mirror" x="27" y="33.6" width="4.2" height="3" rx="1.2"/>
-</svg>`;
+const lerp = (a, b, t) => a + (b - a) * t;
 
-const SVGNS = 'http://www.w3.org/2000/svg';
-const svg = (cls) => { const el = document.createElementNS(SVGNS, 'svg'); el.setAttribute('class', cls); el.setAttribute('aria-hidden', 'true'); return el; };
-const node = (tag, cls) => { const el = document.createElementNS(SVGNS, tag); if (cls) el.setAttribute('class', cls); return el; };
-
-// a point on the road at a height down the page: where it is across, and which
-// way it heads (degrees from straight down; a crossing turns up to 90)
-function pointAt(segs, y) {
-  let seg = segs[segs.length - 1];
-  for (const s of segs) if (y <= s.y1) { seg = s; break; }
-  if (seg.t === 'v') return { x: seg.x, a: 0 };
-  // an S between the lanes: leaves straight down, runs across, arrives straight down
-  const { x0, x1, y0, y1 } = seg;
-  const ym = (y0 + y1) / 2;
-  const yAt = (t) => { const u = 1 - t; return y0 * u * u * u + 3 * ym * u * u * t + 3 * ym * u * t * t + y1 * t * t * t; };
-  let lo = 0, hi = 1;
-  for (let i = 0; i < 22; i++) { const mid = (lo + hi) / 2; if (yAt(mid) < y) lo = mid; else hi = mid; }
-  const t = Math.max(0, Math.min(1, (lo + hi) / 2)), u = 1 - t;
-  const x = x0 * u * u * u + 3 * x0 * u * u * t + 3 * x1 * u * t * t + x1 * t * t * t;
-  const dx = 6 * (x1 - x0) * u * t;
-  const dy = 1.5 * (y1 - y0) * (u * u + t * t);
-  return { x, a: (Math.atan2(-dx, dy) * 180) / Math.PI };
-}
-
-// the height the van has reached at a scroll position: straight lines between knots
-function yAtScroll(knots, s) {
-  if (s <= knots[0][0]) return knots[0][1];
-  for (let i = 1; i < knots.length; i++) {
-    const [s1, y1] = knots[i];
-    if (s <= s1) {
-      const [s0, y0] = knots[i - 1];
-      return s1 === s0 ? y1 : y0 + ((y1 - y0) * (s - s0)) / (s1 - s0);
-    }
+/** The road across a lane W wide and H high: a cubic S from past one edge to past the other. */
+function geometry(W, H, T, back, low) {
+  const pad = T * 2.2;
+  const y0 = H * (low ? 0.64 : 0.36);
+  const y1 = H * (low ? 0.36 : 0.64);
+  const x0 = back ? W + pad : -pad;
+  const x1 = back ? -pad : W + pad;
+  const P = [[x0, y0], [lerp(x0, x1, 0.42), y0], [lerp(x0, x1, 0.58), y1], [x1, y1]];
+  const at = (t) => {
+    const u = 1 - t;
+    return [
+      u * u * u * P[0][0] + 3 * u * u * t * P[1][0] + 3 * u * t * t * P[2][0] + t * t * t * P[3][0],
+      u * u * u * P[0][1] + 3 * u * u * t * P[1][1] + 3 * u * t * t * P[2][1] + t * t * t * P[3][1],
+    ];
+  };
+  // the road measured along its length, so the van keeps one speed on the S
+  const table = [[0, 0]];
+  let len = 0;
+  let prev = at(0);
+  for (let i = 1; i <= 240; i++) {
+    const p = at(i / 240);
+    len += Math.hypot(p[0] - prev[0], p[1] - prev[1]);
+    table.push([i / 240, len]);
+    prev = p;
   }
-  return knots[knots.length - 1][1];
+  const along = (f) => {
+    const s = f * len;
+    let lo = 0;
+    let hi = table.length - 1;
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (table[mid][1] < s) lo = mid; else hi = mid; }
+    const [ta, sa] = table[lo];
+    const [tb, sb] = table[hi];
+    const t = lerp(ta, tb, sb > sa ? (s - sa) / (sb - sa) : 0);
+    const p = at(t);
+    const q = at(Math.min(1, t + 0.002));
+    const r = at(Math.max(0, t - 0.002));
+    return { x: p[0], y: p[1], angle: (Math.atan2(q[1] - r[1], q[0] - r[0]) * 180) / Math.PI };
+  };
+  const d = `M${P[0].map((v) => v.toFixed(1)).join(' ')}C${P.slice(1).map((p) => p.map((v) => v.toFixed(1)).join(' ')).join(' ')}`;
+  return { d, pad, along };
 }
 
-export function initRoad() {
-  const main = document.querySelector('main');
-  if (!main) return null;
-
-  const road = document.createElement('div');
-  road.className = 'road';
-  road.setAttribute('aria-hidden', 'true');
-  const ahead = svg('road__ahead');
-  const aheadPath = node('path', 'road__dots');
-  const start = node('circle', 'road__start');
-  const end = node('circle', 'road__end');
-  const endDot = node('circle', 'road__end-dot');
-  ahead.append(aheadPath, start, end, endDot);
-  const reveal = document.createElement('div');
-  reveal.className = 'road__reveal';
-  const inner = document.createElement('div');
-  inner.className = 'road__inner';
-  const done = svg('road__done');
-  const casing = node('path', 'road__casing');
-  const line = node('path', 'road__line');
-  done.append(casing, line);
-  inner.append(done);
-  reveal.append(inner);
-  road.append(ahead, reveal);
-
-  const van = document.createElement('div');
-  van.className = 'van';
-  van.setAttribute('aria-hidden', 'true');
-  van.innerHTML = VAN;
-  document.body.append(road, van);
+export function initRoad(stage) {
+  const lanes = [...document.querySelectorAll('[data-lane]')];
+  if (!lanes.length) return null;
 
   const timeline = typeof ScrollTimeline === 'function'
     ? new ScrollTimeline({ source: document.scrollingElement || document.documentElement, axis: 'block' })
     : null;
-  let anims = null; // [van, reveal, inner] on the scroll timeline
-  let built = null; // the laid-out road: its segments, knots and sizes
+  let sprite = null; // the band's van as a picture: { url, w, h }
+  let built = null; // each lane's crossing, laid out
+  let anims = [];
   let lastS = -1;
 
+  // each lane's parts, made once: the window, the road in it, and the van
+  const parts = lanes.map((lane, i) => {
+    const clip = document.createElement('div');
+    clip.className = 'lane__clip';
+    const road = document.createElement('div');
+    road.className = 'lane__road';
+    const svg = document.createElementNS(SVG, 'svg');
+    const paths = ['lane__edge', 'lane__tar', 'lane__line'].map((c) => {
+      const p = document.createElementNS(SVG, 'path');
+      p.setAttribute('class', c);
+      return p;
+    });
+    svg.append(...paths);
+    road.append(svg);
+    clip.append(road);
+    const van = document.createElement('img');
+    van.className = 'lane__van';
+    van.alt = '';
+    van.decoding = 'async';
+    van.hidden = true;
+    lane.replaceChildren(clip, van);
+    // one way, then the other; the S climbs, then falls
+    return { lane, clip, road, svg, paths, van, back: i % 2 === 1, low: i % 4 < 2 };
+  });
+
+  // the band's van, printed at the height the lanes show it (again after PROOF re-inks the sheet)
+  function paint(h) {
+    const s = stage?.vanSprite?.(h);
+    if (!s) return false;
+    sprite = { url: s.canvas.toDataURL('image/png'), w: s.canvas.width / s.dpr, h: s.canvas.height / s.dpr, at: h };
+    return true;
+  }
+
   function layout() {
-    const doc = document.scrollingElement || document.documentElement;
-    const W = doc.clientWidth;
     const vh = window.innerHeight;
-    // the page's own height: the road is laid over it and must never lengthen it
-    const H = document.body.offsetHeight;
-    const M = Math.max(1, H - vh);
+    const doc = document.scrollingElement || document.documentElement;
+    const M = Math.max(1, doc.scrollHeight - vh);
     const sy = window.scrollY;
-    const top = (el) => el.getBoundingClientRect().top + sy;
-    const bottom = (el) => el.getBoundingClientRect().bottom + sy;
-
-    // the lanes: the middle of each side margin, kept clear of a notch
-    const cs = getComputedStyle(document.documentElement);
-    const probe = document.querySelector('.toolbar') || main;
-    const m = parseFloat(getComputedStyle(probe).marginLeft) || 16;
-    const vanW = Math.max(14, Math.min(20, m * 0.8));
-    // a phone held sideways: its margin is the notch's, so the lane keeps near the words
-    const safe = parseFloat(cs.getPropertyValue('--safe-l')) || 0;
-    const laneL = Math.max(m / 2, Math.min(m - vanW / 2 - 2, safe + vanW / 2));
-    const laneR = W - laneL;
-
-    // where the road sets out: under the engraving on the front page, under
-    // the date line elsewhere; where it arrives: the foot
-    const band = main.querySelector('[data-gl="band"]');
-    const dl = main.querySelector('.dateline') || document.querySelector('.toolbar');
-    const yStart = Math.round((band ? bottom(band) + 14 : (dl ? bottom(dl) + 18 : 120)));
-    const foot = document.querySelector('.foot');
-    const yEnd = Math.round(foot ? top(foot) + 26 : H - 60);
-    if (yEnd - yStart < 200) return null;
-
-    // the page's clear strips: nothing set across the whole width. Case sheets
-    // held on the screen in turn (a computer, a tablet) are one block, which
-    // the road passes beside, never across; laid one after another (a phone,
-    // held either way), the strips between them count
-    const held = !state.mobile && !state.short;
-    const spans = [];
-    for (const el of main.querySelectorAll(held ? `${SOLID}, main .stack` : SOLID)) {
-      if (held && !el.matches('.stack') && el.closest('.stack')) continue;
-      const r = el.getBoundingClientRect();
-      if (r.height < 1 || r.width < 1) continue;
-      spans.push([r.top + sy - 10, r.bottom + sy + 10]);
-    }
-    // and every line of words, whatever holds it (a key's labels are spans)
-    const words = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT) });
-    const range = document.createRange();
-    for (let n = words.nextNode(); n; n = words.nextNode()) {
-      if (held && n.parentElement?.closest('.stack')) continue;
-      range.selectNodeContents(n);
-      for (const r of range.getClientRects()) if (r.width > 0 && r.height > 0) spans.push([r.top + sy - 8, r.bottom + sy + 8]);
-    }
-    spans.sort((a, b) => a[0] - b[0]);
-    const gaps = [];
-    let reach = yStart;
-    for (const [a, b] of spans) {
-      if (b <= reach) continue;
-      if (a > reach) gaps.push([reach, a]);
-      reach = Math.max(reach, b);
-    }
-    if (yEnd > reach) gaps.push([reach, yEnd]);
-
-    // the reading line the van keeps to, and the scroll a crossing takes
-    const c = Math.round(vh * (state.mobile ? 0.56 : 0.6));
-    const L = Math.max(160, Math.min(440, vh * 0.42, M * 0.22));
-    const minGap = state.mobile ? 36 : 48;
-    const spacing = Math.max(vh * 1.2, 700);
-
-    // Scroll to height, the crossings aside: set out (waiting under the start
-    // until the reading line reaches it, or catching up with the line), keep
-    // to the line, and arrive at the foot, hurrying over the last half screen
-    // if the scroll would end first. Straight lines between its bends (base).
-    const g = (s) => (yStart >= c ? Math.max(yStart, s + c) : Math.min(s + c, yStart + 2 * s));
-    const R = Math.min(vh * 0.5, M / 3);
-    const lack = Math.max(0, yEnd - g(M));
-    const ramp = (s) => g(s) + lack * Math.max(0, (s - (M - R)) / R);
-    const baseAt = (s) => Math.min(yEnd, ramp(s));
-    const solve = (f, y) => { let lo = 0, hi = M; for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (f(mid) < y) lo = mid; else hi = mid; } return hi; };
-    const bends = new Set([0, M, Math.abs(yStart - c), Math.max(0, M - R), solve(ramp, yEnd)]);
-    const base = [...bends].filter((s) => s >= 0 && s <= M).sort((x, y) => x - y).map((s) => [s, baseAt(s)]);
-
-    // choose the crossings: clear strips a good way apart, sides taken in
-    // turn, each with the scroll to slow over it and catch up after it
-    const crossings = [];
-    let lastMid = -Infinity;
-    let clearAt = 0;
-    for (const [g0, g1] of gaps) {
-      const h = g1 - g0;
-      if (h < minGap) continue;
-      const pad = Math.min(10, h * 0.12);
-      const a = g0 + pad, b = g1 - pad;
-      const mid = (a + b) / 2;
-      if (mid - yStart < vh * 0.3 || mid - lastMid < spacing) continue;
-      const sA = solve(baseAt, a), s2 = sA + 2 * L;
-      if (sA < clearAt + 30 || s2 > M - 30 || baseAt(s2) < b + 30) continue;
-      crossings.push({ a, b, sA, s2 });
-      lastMid = mid;
-      clearAt = s2;
-    }
-
-    // the road: down a lane, across, down the other
-    const segs = [];
-    let side = 1; // 1: the right-hand lane
-    let y = yStart;
-    for (const cr of crossings) {
-      const x0 = side > 0 ? laneR : laneL, x1 = side > 0 ? laneL : laneR;
-      segs.push({ t: 'v', x: x0, y0: y, y1: cr.a });
-      segs.push({ t: 'c', x0, x1, y0: cr.a, y1: cr.b });
-      y = cr.b;
-      side = -side;
-    }
-    const xEnd = side > 0 ? laneR : laneL;
-    segs.push({ t: 'v', x: xEnd, y0: y, y1: yEnd });
-    let d = `M${laneR.toFixed(1)} ${yStart}`;
-    for (const sg of segs) {
-      if (sg.t === 'v') d += `V${sg.y1.toFixed(1)}`;
-      else {
-        const ym = ((sg.y0 + sg.y1) / 2).toFixed(1);
-        d += `C${sg.x0.toFixed(1)} ${ym} ${sg.x1.toFixed(1)} ${ym} ${sg.x1.toFixed(1)} ${sg.y1.toFixed(1)}`;
-      }
-    }
-
-    // scroll to height with the crossings: the base, but over each crossing
-    // the van slows (the whole S in L of scroll) and then catches up with it
-    const knots = [];
-    let i = 0;
-    for (const cr of crossings) {
-      for (; i < base.length && base[i][0] < cr.sA; i++) knots.push(base[i]);
-      knots.push([cr.sA, cr.a], [cr.sA + L, cr.b], [cr.s2, baseAt(cr.s2)]);
-      while (i < base.length && base[i][0] <= cr.s2) i++;
-    }
-    for (; i < base.length; i++) knots.push(base[i]);
-    const dense = crossings.map((cr) => [cr.sA, cr.sA + L]);
-
-    return { W, H, M, vh, c, vanW, segs, knots, dense, d, xEnd, yStart, yEnd, laneR };
+    return parts.map((p) => {
+      const r = p.lane.getBoundingClientRect();
+      const W = r.width;
+      const H = r.height;
+      const T = parseFloat(getComputedStyle(p.lane).getPropertyValue('--road')) || H * 0.4;
+      const g = geometry(W, H, T, p.back, p.low);
+      const mid = r.top + sy + H / 2;
+      let s0 = mid - vh * FROM;
+      let s1 = mid - vh * TO;
+      // a lane the scroll cannot carry all the way is crossed in what the scroll has
+      s0 = Math.max(0, s0);
+      s1 = Math.min(M, s1);
+      if (s1 - s0 < 40) s0 = Math.max(0, s1 - 40);
+      return { ...p, W, H, T, g, s0, s1, M };
+    });
   }
 
-  // what the van and the painted road look like at a scroll position
-  function pose(b, s) {
-    const y = yAtScroll(b.knots, s);
-    const p = pointAt(b.segs, y);
-    return { y, x: p.x, a: p.a };
-  }
-  const vanT = (p, s) => `translate(${p.x.toFixed(2)}px, ${(p.y - s).toFixed(2)}px) rotate(${p.a.toFixed(2)}deg)`;
-
-  function keyframes(b) {
-    // every knot, and the crossings sampled finely (the road bends there)
-    const at = new Set(b.knots.map((k) => Math.round(Math.min(b.M, Math.max(0, k[0])))));
-    at.add(0);
-    at.add(Math.round(b.M));
-    for (const [s0, s1] of b.dense) for (let s = s0; s < s1; s += 5) at.add(Math.round(s));
-    const list = [...at].filter((s) => s >= 0 && s <= b.M).sort((x, y) => x - y);
-    const k = { van: [], reveal: [], inner: [] };
-    for (const s of list) {
-      const p = pose(b, s);
-      const offset = s / b.M;
-      k.van.push({ offset, transform: vanT(p, s) });
-      k.reveal.push({ offset, transform: `translateY(${(p.y - b.H).toFixed(2)}px)` });
-      k.inner.push({ offset, transform: `translateY(${(b.H - p.y).toFixed(2)}px)` });
+  // where everything stands at one point of a crossing (0 to 1)
+  function pose(b, f) {
+    const { g, W, T, back } = b;
+    const at = g.along(f);
+    const w = sprite ? (sprite.w * b.vanH) / sprite.h : 0;
+    // the window shows the road up to the van's nose, so the van always stands on it; the
+    // road slides back as far as the window slides on, so it stands still as it is drawn
+    const shown = at.x + g.pad + (back ? -1 : 1) * w * 0.4;
+    const clip = back ? shown : shown - (W + g.pad * 2);
+    const q = { clip: `translateX(${clip.toFixed(1)}px)`, road: `translateX(${(-clip).toFixed(1)}px)`, van: 'none' };
+    if (sprite) {
+      // the wheels on the near half of the road, turned with it; going left, the van faces left
+      const turn = back ? (((at.angle - 180 + 540) % 360) - 180) : at.angle;
+      q.van = `translate(${(at.x - w / 2).toFixed(1)}px, ${(at.y - b.vanH * 0.86 + T * 0.14).toFixed(1)}px) rotate(${turn.toFixed(2)}deg)${back ? ' scaleX(-1)' : ''}`;
     }
-    return k;
+    return q;
+  }
+
+  function clear() {
+    anims.forEach((a) => a.cancel());
+    anims = [];
   }
 
   function build() {
+    clear();
     built = layout();
-    road.hidden = !built;
-    van.hidden = !built;
-    if (!built) return;
-    const b = built;
-    road.style.width = `${b.W}px`;
-    road.style.height = `${b.H}px`;
-    for (const el of [ahead, done]) {
-      el.setAttribute('width', b.W);
-      el.setAttribute('height', b.H);
-      el.setAttribute('viewBox', `0 0 ${b.W} ${b.H}`);
-    }
-    aheadPath.setAttribute('d', b.d);
-    casing.setAttribute('d', b.d);
-    line.setAttribute('d', b.d);
-    start.setAttribute('cx', b.laneR.toFixed(1));
-    start.setAttribute('cy', b.yStart);
-    start.setAttribute('r', state.mobile ? 3.5 : 4.5);
-    for (const [el, r] of [[end, state.mobile ? 6 : 7.5], [endDot, state.mobile ? 2 : 2.6]]) {
-      el.setAttribute('cx', b.xEnd.toFixed(1));
-      el.setAttribute('cy', b.yEnd);
-      el.setAttribute('r', r);
-    }
-    van.style.setProperty('--van-w', `${b.vanW.toFixed(1)}px`);
-    road.classList.toggle('road--narrow', state.mobile);
-    if (timeline) {
-      const k = keyframes(b);
-      if (!anims) {
-        const opts = { timeline, fill: 'both', easing: 'linear' };
-        anims = [van.animate(k.van, opts), reveal.animate(k.reveal, opts), inner.animate(k.inner, opts)];
-      } else {
-        anims[0].effect.setKeyframes(k.van);
-        anims[1].effect.setKeyframes(k.reveal);
-        anims[2].effect.setKeyframes(k.inner);
+    const still = state.reduced;
+    // the van as tall as the widest lane's road wants it
+    const vanH = Math.round(Math.max(...built.map((b) => b.T)) * 1.28);
+    if ((!sprite || sprite.at !== vanH) && !paint(vanH)) sprite = null;
+    for (const b of built) {
+      b.vanH = vanH;
+      const Wc = b.W + b.g.pad * 2;
+      b.svg.setAttribute('width', Wc.toFixed(0));
+      b.svg.setAttribute('height', b.H.toFixed(0));
+      b.svg.setAttribute('viewBox', `${(-b.g.pad).toFixed(1)} 0 ${Wc.toFixed(1)} ${b.H.toFixed(1)}`);
+      b.paths.forEach((p) => p.setAttribute('d', b.g.d));
+      b.clip.style.width = b.road.style.width = `${Wc.toFixed(1)}px`;
+      b.clip.style.left = `${(-b.g.pad).toFixed(1)}px`;
+      b.lane.style.setProperty('--dash', `${(b.T * 0.52).toFixed(1)}px ${(b.T * 0.42).toFixed(1)}px`);
+      b.van.hidden = !sprite;
+      if (sprite) {
+        if (b.van.src !== sprite.url) b.van.src = sprite.url;
+        b.van.style.height = `${vanH}px`;
+        b.van.style.width = `${((sprite.w * vanH) / sprite.h).toFixed(1)}px`;
       }
-    } else {
-      lastS = -1;
-      update();
+      // no van, or the press stopped: the road lies drawn, the van parked halfway
+      if (!sprite || still) {
+        const end = pose(b, 1);
+        b.clip.style.transform = end.clip;
+        b.road.style.transform = end.road;
+        b.van.style.transform = sprite ? pose(b, 0.5).van : '';
+        continue;
+      }
+      if (timeline) {
+        const frames = { clip: [], road: [], van: [] };
+        const put = (s, f) => {
+          const o = Math.min(1, Math.max(0, s / b.M));
+          const q = pose(b, f);
+          frames.clip.push({ offset: o, transform: q.clip });
+          frames.road.push({ offset: o, transform: q.road });
+          frames.van.push({ offset: o, transform: q.van });
+        };
+        put(0, 0);
+        for (let k = 0; k <= STEPS; k++) put(lerp(b.s0, b.s1, k / STEPS), k / STEPS);
+        put(b.M, 1);
+        for (const [el, key] of [[b.clip, 'clip'], [b.road, 'road'], [b.van, 'van']]) {
+          el.style.transform = '';
+          anims.push(el.animate(frames[key], { timeline, fill: 'both', easing: 'linear' }));
+        }
+      }
     }
-    van.classList.add('is-on');
+    lastS = -1;
+    update();
   }
 
-  // Without a ScrollTimeline the one clock moves them (called in the tick's
-  // write phase); with one, the browser does, and this does nothing.
   function update() {
-    if (anims || !built) return;
-    const s = Math.max(0, Math.min(built.M, state.scroll));
+    if (!built || anims.length || state.reduced || !sprite) return;
+    const s = state.scroll;
     if (s === lastS) return;
     lastS = s;
-    const p = pose(built, s);
-    van.style.transform = vanT(p, s);
-    reveal.style.transform = `translateY(${(p.y - built.H).toFixed(2)}px)`;
-    inner.style.transform = `translateY(${(built.H - p.y).toFixed(2)}px)`;
+    for (const b of built) {
+      const q = pose(b, Math.min(1, Math.max(0, (s - b.s0) / (b.s1 - b.s0))));
+      b.clip.style.transform = q.clip;
+      b.road.style.transform = q.road;
+      b.van.style.transform = q.van;
+    }
   }
 
-  // laid out again whenever the page changes its size or its words
   let call = null;
   const soon = () => { call?.kill(); call = gsap.delayedCall(0.15, build); };
   new ResizeObserver(soon).observe(document.body);
   for (const e of ['refit', 'lang', 'resize', 'edition', 'still']) bus.on(e, soon);
+  // PROOF re-inks the sheet: the van is printed again in the new inks
+  bus.on('proof', () => { if (sprite) paint(sprite.at); soon(); });
   build();
   return { update, build };
 }

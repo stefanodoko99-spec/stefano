@@ -2,7 +2,11 @@
 // key "settings"). One module for both sides, so the admin checks a field
 // exactly the way the Worker will. Every optional part of the site is off
 // until it is switched on AND has what it needs, and everything shown comes
-// from here, typed by a person: nothing is ever invented.
+// from here, typed by a person: nothing is ever invented. The one part that
+// starts on is the rate card, with the menu (shared/menu.js), asked for on
+// 2026-09-26 so the prices are on the site before anyone signs in; the admin
+// can change every line of it, or switch it off.
+import { MENU, MENU_CURRENCY } from './menu.js';
 
 export const PLACEHOLDER_EMAIL = 'hello@example.invalid';
 
@@ -27,10 +31,10 @@ export const LIMITS = {
 };
 
 // The groups a rate may stand under on the card, in the card's order: the
-// websites, what can be added to them, the care each month, and the work of a
-// season. A rate in no group stands at the top of the card, as every rate did
-// before there were groups.
-export const RATE_GROUPS = ['sites', 'extras', 'monthly', 'season'];
+// websites, the design, the marketing, what can be added to a site, the care
+// each month, and the work of a season. A rate in no group stands at the top
+// of the card, as every rate did before there were groups.
+export const RATE_GROUPS = ['sites', 'design', 'marketing', 'extras', 'monthly', 'season'];
 
 export const CURRENCIES = ['ALL', 'EUR'];
 
@@ -44,9 +48,10 @@ export function defaults() {
     whatsapp: '',
     // the month Stefano can take new work from ("Available for new work from October 2026")
     availability: { from: '' },
-    features: Object.fromEntries(FEATURES.map((f) => [f, false])),
+    // every part off but the rate card, which starts with the menu
+    features: Object.fromEntries(FEATURES.map((f) => [f, f === 'rates'])),
     links: Object.fromEntries(Object.keys(LINKS).map((k) => [k, ''])),
-    rates: { currency: 'ALL', note: blank(), items: [] },
+    rates: { currency: MENU_CURRENCY, note: blank(), items: MENU.map((it) => ({ id: newId(), ...JSON.parse(JSON.stringify(it)) })) },
     portrait: { key: '', w: 0, h: 0, caption: blank() },
     // graphic work: each piece's photo is set by its upload only, never by a save
     graphic: [],
@@ -139,6 +144,8 @@ export function clean(input, current = defaults()) {
 
   const rates = src.rates && typeof src.rates === 'object' ? src.rates : {};
   out.rates.currency = CURRENCIES.includes(rates.currency) ? rates.currency : 'ALL';
+  // the edit's rates only: the menu the defaults start from is not added to them
+  out.rates.items = [];
   out.rates.note = langs(rates.note, LIMITS.note);
   (Array.isArray(rates.items) ? rates.items : []).slice(0, LIMITS.rates).forEach((it) => {
     const name = langs(it?.name, LIMITS.itemName);

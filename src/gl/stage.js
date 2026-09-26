@@ -75,6 +75,21 @@ const compositeFrag = /* glsl */ `
     gl_FragColor = vec4(col * ra, ra);
   }
 `;
+// The van alone, printed as the band prints it but on paper, with nothing
+// round it: black ink over the paper of its body, and clear where it is not.
+const spriteFrag = /* glsl */ `
+  uniform sampler2D tScene;
+  uniform vec3 uPaper;
+  uniform vec3 uInk;
+  uniform vec3 uRed;
+  varying vec2 vUv;
+  void main() {
+    vec4 s = texture2D(tScene, vUv);
+    vec3 col = mix(uPaper, uRed, clamp(s.g, 0.0, 1.0));
+    col = mix(col, uInk, clamp(s.r, 0.0, 1.0));
+    gl_FragColor = vec4(col, clamp(s.a, 0.0, 1.0));
+  }
+`;
 const fullVert = /* glsl */ `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
 
 function fullTri() {
@@ -793,5 +808,75 @@ export function createStage(canvas) {
     document.documentElement.classList.remove('gl-on');
   });
 
-  return { measure, frame, resize, addPlate, primePlates };
+  // A picture of the band's van, for the one that crosses the page's clear
+  // strips (src/ui/road.js): drawn once by the band's own materials, a little
+  // from above as the band sees it, at the page's density, then read back into
+  // a canvas cut to the van's own outline. Null where there is no band.
+  const spriteMat = new THREE.ShaderMaterial({
+    vertexShader: fullVert,
+    fragmentShader: spriteFrag,
+    depthTest: false,
+    depthWrite: false,
+    blending: THREE.NoBlending,
+    uniforms: { tScene: { value: null }, uPaper: shared.uPaper, uInk: shared.uInk, uRed: shared.uRed },
+  });
+  const spriteMesh = new THREE.Mesh(fullTri(), spriteMat);
+  spriteMesh.frustumCulled = false;
+  const vanCam = new THREE.OrthographicCamera(-2.2, 2.2, 1.25, -1.25, 0.1, 60);
+  function vanSprite(cssH) {
+    if (!band?.soloVan) return null;
+    const h = Math.max(16, Math.round(cssH * 1.25 * dpr));
+    const w = Math.round((h * 4.4) / 2.5);
+    const restore = band.soloVan();
+    const res = shared.uRes.value.clone();
+    const scene = new THREE.WebGLRenderTarget(w, h, { samples: 4 });
+    const flat = new THREE.WebGLRenderTarget(w, h);
+    let cut = null;
+    try {
+      // the band's own angle: about ten degrees above the road
+      vanCam.position.set(0, 0.85 + 10 * Math.tan(THREE.MathUtils.degToRad(10)), 10);
+      vanCam.lookAt(0, 0.85, 0);
+      vanCam.updateProjectionMatrix();
+      shared.uRes.value.set(w, h);
+      renderer.setRenderTarget(scene);
+      renderer.clear();
+      renderer.render(band.scene, vanCam);
+      spriteMat.uniforms.tScene.value = scene.texture;
+      renderer.setRenderTarget(flat);
+      renderer.clear();
+      renderer.render(spriteMesh, orthoCam);
+      const px = new Uint8Array(w * h * 4);
+      renderer.readRenderTargetPixels(flat, 0, 0, w, h, px);
+      // rows come bottom first; find the van's outline as they are laid in
+      const img = new ImageData(w, h);
+      let x0 = w, y0 = h, x1 = -1, y1 = -1;
+      for (let y = 0; y < h; y++) {
+        const from = (h - 1 - y) * w * 4;
+        img.data.set(px.subarray(from, from + w * 4), y * w * 4);
+        for (let x = 0; x < w; x++) {
+          if (px[from + x * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+        }
+      }
+      if (x1 >= x0 && y1 >= y0) {
+        const full = document.createElement('canvas');
+        full.width = w;
+        full.height = h;
+        full.getContext('2d').putImageData(img, 0, 0);
+        cut = document.createElement('canvas');
+        cut.width = x1 - x0 + 1;
+        cut.height = y1 - y0 + 1;
+        cut.getContext('2d').drawImage(full, x0, y0, cut.width, cut.height, 0, 0, cut.width, cut.height);
+      }
+    } finally {
+      restore();
+      shared.uRes.value.copy(res);
+      renderer.setRenderTarget(null);
+      scene.dispose();
+      flat.dispose();
+      force();
+    }
+    return cut && { canvas: cut, dpr };
+  }
+
+  return { measure, frame, resize, addPlate, primePlates, vanSprite };
 }

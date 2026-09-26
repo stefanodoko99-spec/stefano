@@ -766,7 +766,20 @@ export function createBand() {
     for (const k of clouds) k.c.visible = true;
   };
 
-  const api = { scene, camera, update, aim, setSun, setWeather, project, skyPanel, revealSky, morphing: false, draws, setLineSpacing: (px) => { M.sea.uniforms.uFreq.value = px; } };
+  // The van alone, parked in the middle of the world, for the picture of it
+  // that drives across the page's clear strips (stage.js vanSprite, and
+  // src/ui/road.js). Returns what puts everything back as it was.
+  function soloVan() {
+    const hidden = [];
+    const hide = (o) => { if (o.visible) { o.visible = false; hidden.push(o); } };
+    scene.children.forEach((o) => { if (o !== world) hide(o); });
+    world.children.forEach((o) => { if (o !== van) hide(o); });
+    const at = van.position.clone();
+    van.position.set(0, 0, 0);
+    return () => { hidden.forEach((o) => { o.visible = true; }); van.position.copy(at); };
+  }
+
+  const api = { scene, camera, update, aim, setSun, setWeather, project, skyPanel, revealSky, soloVan, morphing: false, draws, setLineSpacing: (px) => { M.sea.uniforms.uFreq.value = px; } };
   if (import.meta.env.DEV) api.debugWeather = () => ({ weather: { ...weather }, storm: { ...storm }, bolt: bolt.visible, boltAt: bolt.position.toArray(), rain: rain.visible });
   return api;
 }

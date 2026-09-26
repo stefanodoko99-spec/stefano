@@ -209,8 +209,8 @@ async function boot() {
   initMagnifier();
   // a phone's tilt leans the engraving's light, where the engraving is drawn
   if (stage) initTilt();
-  // the Elixir van's road down the sheet, painted as it is read
-  const road = initRoad();
+  // the road between the front page's sheets, laid by the band's van as it is read
+  const road = initRoad(stage);
 
   // A link to a part of this sheet is carried there by the one scroll; a link
   // to another sheet is left to the browser, and the press feeds that sheet in.

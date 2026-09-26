@@ -1,9 +1,10 @@
-    <!-- THE RATES: switched on in the admin; the prices are the admin's, set as a telegraph office's tariff -->
+    <!-- THE RATES: the menu, every service and its starting price (shared/menu.js, changed or switched off in the admin), a tab for each group -->
     <section class="sheet sheet--rates" id="rates" aria-labelledby="rates-h" data-optional="rates" hidden>
       <h2 class="sheethead" id="rates-h" data-fit="head" data-ink="rates"><span data-i18n="ratesHead">The rates.</span></h2>
-      <p class="sheet__lede" data-i18n="ratesLine">Prices, set out like the rates of a telegraph office.</p>
+      <p class="sheet__lede" data-i18n="ratesLine">Every service and the price it starts from, in one menu.</p>
       <div class="ratecard">
-        <p class="ratecard__strip"><span class="ratecard__kind" data-i18n="ratesKind">Tariff</span><span>Stefano Doko, <span data-i18n="zone">Albania</span></span></p>
+        <p class="ratecard__strip"><span class="ratecard__kind" data-i18n="ratesKind">The menu</span><span>Stefano Doko, <span data-i18n="zone">Albania</span></span></p>
+        <div class="ratecard__tabs" data-rates-tabs hidden></div>
         <div class="ratecard__lists" data-rates-list></div>
         <p class="ratecard__note" data-rates-note hidden></p>
       </div>
