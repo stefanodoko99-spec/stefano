@@ -46,7 +46,7 @@ node brand/final/render.mjs
 
 ## Still placeholders: fill these in before printing or launch
 
-- Business card (`final/templates/card.html`, the `dd[data-f]` elements): tel `+355 6X XXX XXXX`, web `domain.al`, IG `@handle`. The email is set: `stefanodoko19@icloud.com`, the same as on the site, the flyer (`../flyer/flyer.html`) and Instagram slide 5 (`../flyer/instagram.html`).
+- Business card (`final/templates/card.html`, the `dd[data-f]` elements): tel `+355 6X XXX XXXX`, web `domain.al`, IG `@handle`. The email is set: `stefanodoko19@icloud.com`, the same as on the site, the flyers (`../flyer/flyer.html`, `../flyer/menuja.html`) and Instagram slide 7 (`../flyer/instagram.html`).
 - `final/export/print/card-preview.png` (front and back side by side) is not written by `render.mjs`: rebuild it after re-rendering the card.
 
 ## Explorations (kept for reference, not in use)
@@ -68,6 +68,6 @@ Each folder has its own `make.py` (or `make_logo.py`) and `render.mjs`.
 
 - Python 3 with `fonttools`, `brotli` (for reading woff2), `Pillow` and `pypdf`: `pip install fonttools brotli pillow pypdf`
 - Node, with the project's dependencies installed (`npm install`, which provides `puppeteer-core`)
-- Google Chrome at `C:/Program Files/Google/Chrome/Application/chrome.exe`. The render scripts point at this path, so change it on another machine. `final/render.mjs` and the two in `../flyer/` also find Chrome in `/Applications` on a Mac, or take the path from `CHROME`.
+- Google Chrome at `C:/Program Files/Google/Chrome/Application/chrome.exe`. The render scripts point at this path, so change it on another machine. `final/render.mjs` and the three in `../flyer/` also find Chrome in `/Applications` on a Mac, or take the path from `CHROME`.
 
 Fonts: Inter (`v5/fonts-src/`), plus the site's Anybody, Ultra and Old Standard (`../public/fonts/`, with licences in `../public/fonts/licenses`). All are under the SIL Open Font License.

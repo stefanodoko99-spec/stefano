@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<title>Stefano Doko — Menuja (fletushkë)</title>
+<link rel="stylesheet" href="sheet.css">
+<style>
+/* The whole menu on one A5 sheet, printed both sides: the websites on the
+   front; design, marketing, the season, the add-ons, the monthly care and
+   the red contact block on the back. The rest is sheet.css. */
+
+/* the title: the sheet's one big word, and what it holds */
+.title { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); margin-top: 3.2mm; border-top: .3mm solid var(--ink); }
+.title h1 { font: 900 46pt/.8 var(--display); font-stretch: 74%; text-transform: uppercase; white-space: nowrap; padding: 3.4mm 4mm 2.6mm 0; }
+.title .say { padding: 3.2mm 0 2.6mm 4mm; border-left: .2mm solid var(--line); display: flex; flex-direction: column; justify-content: center; gap: 1.6mm; }
+.title .kicker { display: flex; align-items: center; gap: 1.4mm; }
+.title p { font-size: 7.8pt; line-height: 1.38; letter-spacing: -0.017em; }
+
+/* the back: two columns under a column rule */
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 0; }
+.cols > div:first-child { padding-right: 3.6mm; }
+.cols > div + div { padding-left: 3.6mm; border-left: .2mm solid var(--line); }
+.cols .group:first-child { padding-top: 2.8mm; }
+
+.note { font-size: 6.1pt; line-height: 1.35; color: var(--fade); padding-top: 2mm; }
+</style>
+<script src="sheet.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- the site's marks (partials/defs.html): the asterisk and the arrow -->
+  <symbol id="ast" viewBox="0 0 24 24">
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45"/>
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45" transform="rotate(60 12 12)"/>
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45" transform="rotate(-60 12 12)"/>
+  </symbol>
+  <symbol id="arrow" viewBox="0 0 128 64">
+    <path d="M10 32H116M92 9l24 23-24 23" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<!-- ANA 1 · faqet e internetit -->
+<section class="sheet" id="front">
+  <div class="dateline label">
+    <span>Botim i veçantë</span>
+    <span>Çmimi: një email</span>
+    <span>Shqipëri</span>
+  </div>
+
+  <header class="mast">
+    <img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">
+    <h2 class="name" data-fit>Stefano Doko</h2>
+    <p class="side"><b>Dizajner grafik.</b>Dizajner dhe zhvillues uebi.<br>Me bazë në Shqipëri.</p>
+  </header>
+
+  <div class="band"><img src="../public/band-poster.jpg" alt=""></div>
+  <p class="cap">Gravurë e bërë për këtë fletë: parfumet e Elixir në rrugë, Bar Martiri buzë detit.</p>
+
+  <section class="title">
+    <h1 data-fit>Menuja</h1>
+    <div class="say">
+      <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Për bizneset që janë të hapura sot</p>
+      <p>Faqe interneti, dizajn dhe marketing, me çmimet në një fletë. Zgjidh çfarë të duhet dhe shkruaji Stefanos.</p>
+    </div>
+  </section>
+
+  <h2 class="group label"><svg class="ast"><use href="#ast"/></svg>Faqet e internetit<span class="count">1 nga 6</span></h2>
+  <p class="lede">Çdo faqe punon në telefon, në shqip dhe anglisht, dhe gjendet në Google.</p>
+  <ul class="rates rates--big">
+    <li class="rate">
+      <h3>Faqja e parë</h3><span class="lead"></span><span class="price"><small>nga</small>€150</span>
+      <p>Një faqe e vetme: butona për WhatsApp dhe telefon, harta në Google.</p>
+    </li>
+    <li class="rate">
+      <h3>Biznesi</h3><span class="lead"></span><span class="price"><small>nga</small>€400</span>
+      <p>4–6 faqe, deri në tri gjuhë, menu ose çmimore, galeri, profil në Google Maps. Si barmartiri.com.</p>
+    </li>
+    <li class="rate">
+      <h3>Premium</h3><span class="lead"></span><span class="price"><small>nga</small>€1.000</span>
+      <p>Dizajn unik me animacion: faqja që të dallon nga të tjerët.</p>
+    </li>
+    <li class="rate">
+      <h3>Dyqani online</h3><span class="lead"></span><span class="price"><small>nga</small>€1.200</span>
+      <p>Katalog produktesh, shportë, porosi me WhatsApp ose pagesë në dorëzim. Si elixir.al.</p>
+    </li>
+    <li class="rate">
+      <h3>Dyqani me panel</h3><span class="lead"></span><span class="price"><small>nga</small>€2.500</span>
+      <p>Panel për produktet dhe porositë, email për çdo porosi, pagesë me kartë përmes bankës.</p>
+    </li>
+    <li class="rate">
+      <h3>Rregullimi i faqes</h3><span class="lead"></span><span class="price"><small>nga</small>€80</span>
+      <p>Për faqen që ke tashmë: më e shpejtë, e rregullt në telefon dhe që gjendet në Google.</p>
+    </li>
+  </ul>
+
+  <div class="foot label">
+    <span>Shkruaji Stefanos: <span class="mail">stefanodoko19@icloud.com</span></span>
+    <span>Kthe fletën<svg class="arrow"><use href="#arrow"/></svg></span>
+  </div>
+</section>
+
+<!-- ANA 2 · dizajn, marketing, shtesat, çdo muaj, sezoni, kontakti -->
+<section class="sheet" id="back">
+  <div class="dateline label">
+    <span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span>
+    <span>Ana e dytë</span>
+    <span>Stefano Doko</span>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h2 class="group label"><svg class="ast"><use href="#ast"/></svg>Dizajn<span class="count">2 nga 6</span></h2>
+      <ul class="rates">
+        <li class="rate">
+          <h3>Logo</h3><span class="lead"></span><span class="price"><small>nga</small>€100</span>
+          <p>Logo e thjeshtë me ngjyrat dhe shkronjat e biznesit.</p>
+        </li>
+        <li class="rate">
+          <h3>Identiteti i plotë</h3><span class="lead"></span><span class="price"><small>nga</small>€250</span>
+          <p>Logo, ngjyrat, shkronjat, udhëzuesi i markës dhe kartëvizita.</p>
+        </li>
+        <li class="rate">
+          <h3>Menu për shtyp</h3><span class="lead"></span><span class="price"><small>nga</small>€50</span>
+          <p>Për barin ose restorantin, gati për shtypshkronjën.</p>
+        </li>
+        <li class="rate">
+          <h3>Fletushkë ose poster</h3><span class="lead"></span><span class="price"><small>nga</small>€40</span>
+          <p>Si kjo fletë: gati për shtypshkronjën, në PDF.</p>
+        </li>
+        <li class="rate">
+          <h3>Shabllone për Instagram</h3><span class="lead"></span><span class="price"><small>nga</small>€50</span>
+          <p>Postime me stilin e biznesit, gati për t’i mbushur.</p>
+        </li>
+      </ul>
+
+      <h2 class="group label"><svg class="ast"><use href="#ast"/></svg>Marketing<span class="count">3 nga 6</span></h2>
+      <ul class="rates">
+        <li class="rate">
+          <h3>Profili në Google</h3><span class="lead"></span><span class="price"><small>nga</small>€30</span>
+          <p>Hapja dhe verifikimi i profilit në Google Maps.</p>
+        </li>
+        <li class="rate">
+          <h3>Kalendari i postimeve</h3><span class="lead"></span><span class="price"><small>nga</small>€50<i>/ muaj</i></span>
+          <p>Plani i postimeve të muajit, me tekstet gati.</p>
+        </li>
+        <li class="rate">
+          <h3>Fushatë me email</h3><span class="lead"></span><span class="price"><small>nga</small>€40</span>
+          <p>Teksti dhe dizajni i një email-i për klientët e biznesit.</p>
+        </li>
+      </ul>
+      <h2 class="group label"><svg class="ast"><use href="#ast"/></svg>Një herë në sezon<span class="count">6 nga 6</span></h2>
+      <ul class="rates">
+        <li class="rate">
+          <h3>Paketa e sezonit</h3><span class="lead"></span><span class="price"><small>nga</small>€50</span>
+          <p>Për barët e plazhit, prill–maj: çmime, menu dhe foto të reja para verës.</p>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="group label"><svg class="ast"><use href="#ast"/></svg>Shtesat<span class="count">4 nga 6</span></h2>
+      <ul class="rates">
+        <li class="rate">
+          <h3>Gjuhë shtesë</h3><span class="lead"></span><span class="price"><small>nga</small>€80</span>
+          <p>Italisht, gjermanisht ose çdo gjuhë për turistët.</p>
+        </li>
+        <li class="rate">
+          <h3>Faqe shtesë</h3><span class="lead"></span><span class="price"><small>nga</small>€30</span>
+          <p>Një shërbim, një ofertë ose një faqe e re.</p>
+        </li>
+        <li class="rate">
+          <h3>Ngarkim produktesh</h3><span class="lead"></span><span class="price"><small>nga</small>€50<i>/ 50 copë</i></span>
+          <p>Produktet në dyqan, me emër, çmim dhe përshkrim.</p>
+        </li>
+        <li class="rate">
+          <h3>Fotot e produkteve</h3><span class="lead"></span><span class="price"><small>nga</small>€1<i>/ foto</i></span>
+          <p>Heqja e sfondit dhe pastrimi, që dyqani të duket i njëjtë.</p>
+        </li>
+      </ul>
+
+      <h2 class="group label"><svg class="ast"><use href="#ast"/></svg>Çdo muaj<span class="count">5 nga 6</span></h2>
+      <ul class="rates">
+        <li class="rate">
+          <h3>Mirëmbajtja</h3><span class="lead"></span><span class="price"><small>nga</small>€10<i>/ muaj</i></span>
+          <p>Hostim, domain, kopje rezervë, ndryshime të vogla.</p>
+        </li>
+        <li class="rate">
+          <h3>Kujdesi i biznesit</h3><span class="lead"></span><span class="price"><small>nga</small>€30<i>/ muaj</i></span>
+          <p>Mirëmbajtja, plus një orë ndryshime dhe postime në Google.</p>
+        </li>
+        <li class="rate">
+          <h3>Kujdesi i dyqanit</h3><span class="lead"></span><span class="price"><small>nga</small>€60<i>/ muaj</i></span>
+          <p>Produkte të reja, çmime, oferta dhe kontroll në Google.</p>
+        </li>
+        <li class="rate">
+          <h3>SEO lokale</h3><span class="lead"></span><span class="price"><small>nga</small>€80<i>/ muaj</i></span>
+          <p>Më shumë vlerësime, përmbajtje e re dhe raport çdo muaj.</p>
+        </li>
+        <li class="rate">
+          <h3>Reklama në Instagram</h3><span class="lead"></span><span class="price"><small>nga</small>€100<i>/ muaj</i></span>
+          <p>Reklama në Instagram dhe Facebook. Buxheti i reklamave paguhet veçmas.</p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="note">Çmimet janë në euro dhe tregojnë nga sa nis puna. Çmimi i saktë vjen me ofertën, pasi të dimë çfarë i duhet biznesit tënd.</p>
+
+  <section class="extra">
+    <h2 data-fit>Zgjidh nga menuja.</h2>
+    <span class="mail" data-fit>stefanodoko19@icloud.com</span>
+    <p>Shkruaj në shqip ose në anglisht. Thuaj çfarë biznesi ke dhe çfarë të duhet nga menuja.</p>
+    <svg class="stamp" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="98" fill="#EFE6D2" stroke="#141414" stroke-width="2.4"/>
+      <path id="ring-top" d="M24 100a76 76 0 0 1 152 0" fill="none"/>
+      <path id="ring-bottom" d="M176 100a76 76 0 0 1-152 0" fill="none"/>
+      <text><textPath href="#ring-top" startOffset="50%" text-anchor="middle" dominant-baseline="middle">SHKRUAJI STEFANOS</textPath></text>
+      <text><textPath href="#ring-bottom" startOffset="50%" text-anchor="middle" dominant-baseline="middle">WRITE TO STEFANO</textPath></text>
+      <use href="#ast" x="14" y="93" width="14" height="14" fill="#141414"/>
+      <use href="#ast" x="172" y="93" width="14" height="14" fill="#141414"/>
+      <circle cx="100" cy="100" r="54" fill="none" stroke="#141414" stroke-width="1.4"/>
+      <use href="#arrow" x="68" y="84" width="64" height="32" color="#141414"/>
+    </svg>
+  </section>
+
+  <div class="foot label">
+    <span><svg class="ast"><use href="#ast"/></svg>Puna në përdorim: elixir.al, barmartiri.com</span>
+    <span>Stefano Doko</span>
+  </div>
+</section>
+
+</body>
+</html>

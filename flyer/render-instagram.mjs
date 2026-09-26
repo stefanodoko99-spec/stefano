@@ -1,4 +1,4 @@
-// Renders instagram.html to five 1080x1350 carousel slides (instagram-1.png … instagram-5.png).
+// Renders instagram.html to seven 1080x1350 carousel slides (instagram-1.png … instagram-7.png).
 // usage: node flyer/render-instagram.mjs
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -13,7 +13,8 @@ const browser = await puppeteer.launch({
 const page = await browser.newPage();
 await page.setViewport({ width: 1080, height: 1350, deviceScaleFactor: 1 });
 await page.goto(pathToFileURL(path.join(dir, 'instagram.html')).href, { waitUntil: 'networkidle0' });
-await page.evaluate(() => document.fonts.ready);
+// the heads are fitted to their tracks once the fonts are in (sheet.js)
+await page.waitForFunction(() => document.documentElement.dataset.fitted === '1');
 const slides = await page.$$('.slide');
 for (const [i, el] of slides.entries()) {
   // content that runs past the foot rule means the slide is overfull

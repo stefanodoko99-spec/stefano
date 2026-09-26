@@ -4,275 +4,349 @@
 <meta charset="utf-8">
 <title>Stefano Doko — Menuja (Instagram)</title>
 <style>
+/* The menu as a seven-slide carousel, 1080 x 1350, in the site's modern
+   edition (DESIGN.md), the same as the A5 menu (menuja.html, sheet.css) at
+   the size of a post: Inter for what is read, Anybody for the heads, the
+   labels and the prices, one ink on newsprint, alarm red for the engraving
+   band, the asterisks and the contact block. One group of the menu to a slide,
+   its name the slide's one big head (brand/final/guide: type is the image). */
 @font-face { font-family: 'Anybody'; src: url('../public/fonts/Anybody-VF.woff2') format('woff2'); font-weight: 100 900; font-stretch: 50% 150%; }
-@font-face { font-family: 'Ultra'; src: url('../public/fonts/Ultra-Regular.woff2') format('woff2'); }
-@font-face { font-family: 'Old Standard'; src: url('../public/fonts/OldStandard-Regular.woff2') format('woff2'); font-weight: 400; }
-@font-face { font-family: 'Old Standard'; src: url('../public/fonts/OldStandard-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; }
+@font-face { font-family: 'Inter'; src: url('../public/fonts/Inter-VF-latin.woff2') format('woff2'); font-weight: 100 900; font-style: normal; }
 
 :root {
-  --paper: #EFE6D2; --aged: #E3D6BA; --ink: #141414; --fade: #5F584F; --alarm: #E23B2E;
+  --paper: #EFE6D2; --aged: #E6DCC6; --ink: #141414; --fade: #5F584F; --alarm: #E23B2E;
+  --line: color-mix(in srgb, var(--ink) 17%, transparent);
   --display: 'Anybody', 'Arial Narrow', sans-serif;
-  --fat: 'Ultra', serif;
-  --text: 'Old Standard', 'Times New Roman', serif;
+  --text: 'Inter', 'Helvetica Neue', Arial, sans-serif;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #777; color: var(--ink); font: 400 26px/1.35 var(--text); font-variant-numeric: oldstyle-nums proportional-nums; }
+body { background: #777; color: var(--ink); font: 400 26px/1.4 var(--text); letter-spacing: -0.011em; font-variant-numeric: lining-nums; }
 .slide {
   position: relative; width: 1080px; height: 1350px; overflow: hidden;
   padding: 56px 72px 52px; display: flex; flex-direction: column;
   background-color: var(--paper);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .07 0 0 0 0 .05 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* a fine grain only, as on the site */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .07 0 0 0 0 .05 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-.label { font: 800 19px/1 var(--display); font-stretch: 90%; letter-spacing: .08em; text-transform: uppercase; }
-.star { font: 400 26px/1 var(--display); }
+/* nothing on a slide gives way: a slide that is too full runs past its foot, and the renderer says so */
+.slide > * { flex-shrink: 0; }
 
-.slug { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 3px solid var(--ink); }
-.slug span { padding-bottom: 14px; }
-.slug span:nth-child(2) { text-align: center; border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); }
-.slug span:nth-child(3) { text-align: right; }
+.label { font: 800 19px/1 var(--display); font-stretch: 90%; letter-spacing: .1em; text-transform: uppercase; }
+.ast { width: 22px; height: 22px; fill: var(--alarm); flex: none; }
+.arrow { width: 64px; height: 32px; color: var(--ink); flex: none; }
 
-.foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 3px solid var(--ink); padding-top: 14px; }
+/* the date line: three cells under one rule */
+.dateline { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 3px solid var(--ink); }
+.dateline > * { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; }
+.dateline > :nth-child(2) { justify-content: center; border-left: 2px solid var(--line); border-right: 2px solid var(--line); }
+.dateline > :nth-child(3) { justify-content: flex-end; }
+.dateline .mk { height: 26px; width: auto; display: block; }
 
-.hand { width: 96px; height: 48px; }
-.hand .hand-cuff, .hand .hand-body { fill: var(--ink); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; }
-.hand .hand-line { fill: none; stroke: var(--paper); stroke-width: 2.4; stroke-linecap: round; }
+/* the foot: one rule, a line each side */
+.foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-top: 3px solid var(--ink); padding-top: 14px; }
+.foot > span { display: flex; align-items: center; gap: 14px; }
 
-/* ---------- cover ---------- */
-.mast { display: flex; align-items: center; justify-content: space-between; padding: 30px 0 26px; }
-.name { font: 900 104px/.8 var(--display); font-stretch: 62%; text-transform: uppercase; white-space: nowrap; }
-.mast-sub { white-space: nowrap; font: 850 27px/1.05 var(--display); font-stretch: 80%; text-transform: uppercase; }
-.band { border-top: 3px solid var(--ink); border-bottom: 10px solid var(--ink); }
-.band img { display: block; width: 100%; height: 300px; object-fit: cover; object-position: 50% 60%; }
-.cap { font: italic 400 20px/1.3 var(--text); text-align: right; padding-top: 8px; }
-.cover-title { text-align: center; padding: 40px 0 0; }
-.cover-title .kicker { display: flex; justify-content: center; gap: 18px; align-items: center; }
-.cover-title h1 { font: 400 164px/.86 var(--fat); text-transform: uppercase; margin: 22px 0 18px; letter-spacing: -.01em; }
-.cover-title p { font: italic 400 36px/1.25 var(--text); }
-.contents { margin-top: 34px; border-top: 3px solid var(--ink); }
-.contents li { list-style: none; display: grid; grid-template-columns: 70px 1fr auto; align-items: baseline; padding: 14px 0; border-bottom: 2px solid var(--ink); }
-.contents .no { font: 400 34px/1 var(--fat); }
-.contents .t { font: 850 32px/1 var(--display); font-stretch: 84%; text-transform: uppercase; letter-spacing: .02em; }
-.contents .pg { font: italic 400 24px/1 var(--text); }
+/* ---------- 1 · the cover ---------- */
+.mast { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 22px; padding: 22px 0 20px; }
+.mast .mk { height: 72px; width: auto; display: block; }
+.name { font: 900 90px/.8 var(--display); font-stretch: 70%; text-transform: uppercase; white-space: nowrap; }
+.side { font: 850 17px/1.12 var(--display); font-stretch: 84%; letter-spacing: .01em; text-transform: uppercase; text-align: right; }
+.side b { display: block; font-size: 24px; font-weight: 850; }
+/* the engraving band: a rounded cut, closed by its ink edge */
+.band { border-radius: 22px; overflow: hidden; border-bottom: 9px solid var(--ink); background: var(--alarm); }
+.band img { display: block; width: 100%; height: 236px; object-fit: cover; object-position: 50% 62%; }
+.cap { font: 400 17px/1.3 var(--text); color: var(--fade); text-align: right; padding-top: 9px; }
+.cover-title { padding-top: 26px; }
+.kicker { display: flex; align-items: center; gap: 12px; }
+.cover-title h1 { display: block; margin: 16px 0 12px; font: 900 200px/.8 var(--display); font-stretch: 74%; text-transform: uppercase; white-space: nowrap; }
+.cover-title .say { font-size: 30px; line-height: 1.34; letter-spacing: -0.017em; max-width: 30ch; }
+/* the contents: each group and the slide it is on */
+.contents { list-style: none; margin-top: 30px; border-top: 3px solid var(--ink); }
+.contents li { display: grid; grid-template-columns: 58px minmax(0, 1fr) auto; align-items: baseline; padding: 10px 0 9px; border-bottom: 2px solid var(--line); }
+.contents .no { font: 900 30px/1 var(--display); font-stretch: 118%; }
+.contents .t { font: 850 30px/1 var(--display); font-stretch: 86%; letter-spacing: .02em; text-transform: uppercase; }
+.contents .pg { color: var(--fade); }
 
-/* ---------- menu pages ---------- */
-.sec { display: flex; align-items: baseline; justify-content: space-between; padding: 36px 0 6px; }
-.sec h2 { font: 400 92px/.9 var(--fat); text-transform: uppercase; }
-.sec .no { font: 400 92px/.9 var(--fat); color: var(--alarm); }
-.lede { font: italic 400 28px/1.3 var(--text); padding: 12px 0 22px; border-bottom: 3px solid var(--ink); }
-.menu { list-style: none; }
-.item { padding: 22px 0 20px; border-bottom: 2px solid var(--ink); }
-.item .row { display: flex; align-items: baseline; gap: 14px; }
-.item h3 { font: 850 36px/1 var(--display); font-stretch: 82%; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap; }
-.item h3 em { font: italic 400 24px/1 var(--text); text-transform: none; letter-spacing: 0; color: var(--fade); margin-left: 8px; }
-.item .dots { flex: 1; border-bottom: 3px dotted var(--ink); transform: translateY(-8px); min-width: 30px; }
-.item .price { font: 400 44px/1 var(--fat); font-variant-numeric: lining-nums; white-space: nowrap; }
-.item .price small { font: 800 17px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; margin-right: 8px; vertical-align: 6px; }
-.item .price .per { font: italic 400 22px/1 var(--text); margin-left: 4px; }
-.item p { font-size: 24px; line-height: 1.32; margin-top: 8px; max-width: 800px; }
-.menu--tight .item { padding: 17px 0 15px; }
-.menu--tight .item h3 { font-size: 32px; }
-.menu--tight .item .price { font-size: 38px; }
-.menu--tight .item p { font-size: 22px; margin-top: 6px; }
-.special { margin-top: 26px; border: 3px solid var(--ink); border-radius: 12px; padding: 22px 26px; background: var(--alarm); color: var(--paper); }
-.special .row { display: flex; align-items: baseline; gap: 14px; }
-.special h3 { font: 850 34px/1 var(--display); font-stretch: 82%; text-transform: uppercase; letter-spacing: .02em; }
-.special .dots { flex: 1; border-bottom: 3px dotted var(--paper); transform: translateY(-8px); }
-.special .price { font: 400 42px/1 var(--fat); font-variant-numeric: lining-nums; }
-.special .price small { font: 800 17px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; margin-right: 8px; vertical-align: 6px; }
-.special p { font-size: 24px; line-height: 1.3; margin-top: 8px; }
-.note { font: italic 400 21px/1.3 var(--text); color: var(--fade); padding-top: 16px; }
+/* ---------- 2 to 6 · the menu ---------- */
+.sec { padding: 34px 0 0; }
+.sec .count { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+.sec h2 { display: block; margin-top: 18px; font: 900 120px/.8 var(--display); font-stretch: 74%; text-transform: uppercase; white-space: nowrap; }
+.lede { font-size: 27px; line-height: 1.34; color: var(--fade); padding: 18px 0 22px; border-bottom: 3px solid var(--ink); }
+.rates { list-style: none; }
+/* on a menu slide the list takes the free height, its lines sharing it evenly */
+.lede + .rates { flex-grow: 1; display: flex; flex-direction: column; }
+.lede + .rates > .rate { flex-grow: 1; align-content: center; }
+/* a name that runs to two lines is led from its last line to the price */
+.rate { display: grid; grid-template-columns: auto minmax(30px, 1fr) auto; align-content: start; align-items: last baseline; column-gap: 16px; padding: 24px 0 22px; border-bottom: 2px solid var(--line); }
+.rate h3 { font: 850 34px/1.1 var(--display); font-stretch: 86%; letter-spacing: .02em; text-transform: uppercase; }
+.rate .lead { align-self: end; margin-bottom: 8px; border-bottom: 3px dotted color-mix(in srgb, var(--ink) 40%, transparent); }
+.rate .price { font: 900 50px/1 var(--display); font-stretch: 78%; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.price small, .price i { font: 400 22px/1 var(--text); font-style: normal; letter-spacing: 0; color: var(--fade); }
+.price small { margin-right: 7px; }
+.price i { margin-left: 5px; }
+.rate p { grid-column: 1 / -1; font-size: 24px; line-height: 1.36; color: var(--fade); margin-top: 8px; }
+.rates--six .rate { padding: 18px 0 16px; }
+/* the season, one line of its own, boxed like the site's tariff */
+.special { margin-top: 24px; padding: 20px 30px 4px; border-radius: 26px; box-shadow: inset 0 0 0 2px var(--ink); }
+.special .count { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 3px solid var(--ink); }
+.special .rate { border-bottom: 0; padding-top: 18px; }
 
-/* ---------- contact ---------- */
-.proof { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; padding-top: 34px; }
-.plate { border: 3px solid var(--ink); border-radius: 18px; overflow: hidden; height: 440px; background: var(--aged); }
-.plate img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-figcaption { font: italic 400 22px/1.25 var(--text); padding-top: 10px; }
-figcaption b { font: 800 22px/1 var(--display); font-style: normal; letter-spacing: .06em; text-transform: uppercase; display: block; margin-bottom: 4px; }
-.write { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 40px; margin-top: 34px; padding-top: 34px; border-top: 3px solid var(--ink); }
-.stamp {
-  width: 250px; height: 250px; border-radius: 50%;
-  background: var(--alarm); color: var(--paper);
-  display: grid; place-items: center; text-align: center;
-  box-shadow: inset 0 0 0 10px var(--alarm), inset 0 0 0 14px var(--paper);
-  transform: rotate(-8deg);
-}
-.stamp span { font: 400 29px/.95 var(--fat); text-transform: uppercase; }
-.write h2 { font: 850 58px/.95 var(--display); font-stretch: 78%; text-transform: uppercase; }
-.write .mail { font: 850 38px/1 var(--display); font-stretch: 86%; margin-top: 20px; }
-.write .lang { font: italic 400 26px/1.25 var(--text); margin-top: 10px; }
-#s2 .item { padding: 32px 0 30px; }
-#s4 .item { padding: 27px 0 25px; }
-#s5 .sec h2 { font-size: 76px; }
-#s5 .sec { padding-top: 32px; }
-.mk { height: 88px; width: auto; display: block; }
-.mast { gap: 22px; justify-content: flex-start; }
-.mast .mast-sub { margin-left: auto; }
-.slug-mk { display: flex; align-items: flex-end; gap: 12px; }
-.slug-mk img { height: 26px; width: auto; }
-.mk-big { height: 190px; width: auto; display: block; }
+/* ---------- 7 · the work, and where to write ---------- */
+.work h2 { display: block; font: 900 120px/.8 var(--display); font-stretch: 74%; text-transform: uppercase; white-space: nowrap; }
+.work h2 + h2 { margin-top: 6px; }
+.work { padding-top: 34px; }
+.proof { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; padding-top: 38px; }
+.plate { height: 460px; padding: 10px; border-radius: 20px; background: var(--aged); box-shadow: inset 0 0 0 2px var(--line); }
+.plate img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 12px; }
+figcaption { padding-top: 12px; font-size: 21px; line-height: 1.3; color: var(--fade); }
+figcaption b { display: block; margin-bottom: 6px; color: var(--ink); font: 800 19px/1 var(--display); font-stretch: 90%; letter-spacing: .1em; text-transform: uppercase; }
+/* the red sheet: the site's EXTRA */
+.extra { position: relative; margin-top: 30px; padding: 34px 38px 36px; border-radius: 26px; background: var(--alarm); color: var(--ink); }
+.extra h2 { display: block; font: 900 50px/.84 var(--display); font-stretch: 118%; text-transform: uppercase; white-space: nowrap; margin-right: 250px; }
+.extra .mail { display: block; margin: 24px 250px 0 0; padding-bottom: 14px; font: 850 60px/.9 var(--display); font-stretch: 78%; white-space: nowrap; border-bottom: 9px solid var(--ink); }
+.extra p { font-size: 25px; line-height: 1.36; letter-spacing: -0.017em; margin-top: 20px; max-width: 30ch; }
+.extra .stamp { position: absolute; right: 36px; top: 50%; width: 214px; height: 214px; transform: translateY(-50%) rotate(-8deg); filter: drop-shadow(0 10px 14px rgb(20 20 20 / .35)); }
+.stamp text { font: 800 15.5px/1 var(--display); font-stretch: 100%; letter-spacing: .14em; fill: var(--ink); }
 </style>
+<script src="sheet.js"></script>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute">
-  <symbol id="hand" viewBox="0 0 128 64">
-    <path class="hand-cuff" d="M5 15.5 26.5 12.5 28.5 51.5 7.5 48.5Z"/>
-    <path class="hand-body" d="M28 17C36 14 44 12 52 13C58 11 66 12 70 17L112 17C121 17 122.5 28 114 28.5L77 29.5C81.5 31 81.5 36.5 76.5 37.5C81 39.5 80.5 44.5 75.5 45.5C78.5 47.5 77 52.5 71 52.5C62 53.5 50 53.5 42 51.5C36 50.5 32 49.5 29 49.5Z"/>
-    <path class="hand-line" d="M52 20.5C58 21.5 64 22.5 70.5 21.2M63 37.5H76M61.5 45.5H75M104 19.5C108.5 19.5 110.5 22.5 108.5 25.5M12 18.5 13 45.5M17 17.5 18 46.5M22 16.5 23 47.5"/>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- the site's marks (partials/defs.html): the asterisk and the arrow -->
+  <symbol id="ast" viewBox="0 0 24 24">
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45"/>
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45" transform="rotate(60 12 12)"/>
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45" transform="rotate(-60 12 12)"/>
+  </symbol>
+  <symbol id="arrow" viewBox="0 0 128 64">
+    <path d="M10 32H116M92 9l24 23-24 23" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
 </svg>
 
 <!-- 1 · cover -->
 <section class="slide" id="s1">
-  <div class="slug label"><span>Botim i veçantë</span><span>Çmimi: një email</span><span>Shqipëri</span></div>
-  <div class="mast">
+  <div class="dateline label"><span>Botim i veçantë</span><span>Çmimi: një email</span><span>Shqipëri</span></div>
+  <header class="mast">
     <img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">
-    <h2 class="name">Stefano Doko</h2>
-    <p class="mast-sub">Dizajner grafik.<br>Me bazë në Shqipëri.</p>
-  </div>
+    <h2 class="name" data-fit>Stefano Doko</h2>
+    <p class="side"><b>Dizajner grafik.</b>Dizajner dhe zhvillues uebi.<br>Me bazë në Shqipëri.</p>
+  </header>
   <div class="band"><img src="../public/band-poster.jpg" alt=""></div>
-  <p class="cap">Gdhendur për këtë fletë: parfumet e Elixir në rrugë, Bar Martiri buzë detit.</p>
+  <p class="cap">Gravurë e bërë për këtë fletë: parfumet e Elixir në rrugë, Bar Martiri buzë detit.</p>
   <div class="cover-title">
-    <div class="kicker"><span class="star">★</span><span class="label">Për bizneset që janë hapur sot</span><span class="star">★</span></div>
-    <h1>Menuja</h1>
-    <p>Faqe interneti, dyqane online dhe kujdesi çdo muaj.</p>
+    <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Për bizneset që janë të hapura sot</p>
+    <h1 data-fit data-fit-max="196">Menuja</h1>
+    <p class="say">Faqe interneti, dizajn dhe marketing: çdo shërbim me çmimin e vet. Zgjidh çfarë të duhet dhe shkruaji Stefanos.</p>
   </div>
   <ol class="contents">
-    <li><span class="no">1</span><span class="t">Faqet e internetit</span><span class="pg">faqe 2</span></li>
-    <li><span class="no">2</span><span class="t">Shtesat</span><span class="pg">faqe 3</span></li>
-    <li><span class="no">3</span><span class="t">Çdo muaj</span><span class="pg">faqe 4</span></li>
+    <li><span class="no">1</span><span class="t">Faqet e internetit</span><span class="pg label">Faqe 2</span></li>
+    <li><span class="no">2</span><span class="t">Dizajn</span><span class="pg label">Faqe 3</span></li>
+    <li><span class="no">3</span><span class="t">Marketing</span><span class="pg label">Faqe 4</span></li>
+    <li><span class="no">4</span><span class="t">Shtesat</span><span class="pg label">Faqe 5</span></li>
+    <li><span class="no">5</span><span class="t">Çdo muaj</span><span class="pg label">Faqe 6</span></li>
+    <li><span class="no">6</span><span class="t">Një herë në sezon</span><span class="pg label">Faqe 6</span></li>
   </ol>
-  <div class="foot label"><span>Rrëshqit për menunë</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></div>
+  <div class="foot label"><span>Rrëshqit për menunë</span><svg class="arrow"><use href="#arrow"/></svg></div>
 </section>
 
 <!-- 2 · websites -->
 <section class="slide" id="s2">
-  <div class="slug label"><span class="slug-mk"><img src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 2</span><span>Stefano Doko</span></div>
-  <div class="sec"><h2>Faqet e<br>internetit</h2><span class="no">1</span></div>
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 2</span><span>Stefano Doko</span></div>
+  <div class="sec">
+    <p class="count label"><svg class="ast"><use href="#ast"/></svg>1 nga 6</p>
+    <h2 data-fit data-fit-max="150">Faqet e internetit</h2>
+  </div>
   <p class="lede">Çdo faqe punon në telefon, në shqip dhe anglisht, dhe gjendet në Google.</p>
-  <ul class="menu">
-    <li class="item">
-      <div class="row"><h3>Faqja e parë</h3><span class="dots"></span><span class="price"><small>nga</small>€150</span></div>
+  <ul class="rates rates--six">
+    <li class="rate">
+      <h3>Faqja e parë</h3><span class="lead"></span><span class="price"><small>nga</small>€150</span>
       <p>Një faqe e vetme: butona për WhatsApp dhe telefon, harta në Google.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Biznesi <em>si barmartiri.com</em></h3><span class="dots"></span><span class="price"><small>nga</small>€400</span></div>
-      <p>4–6 faqe, deri në tri gjuhë, menu ose çmimore, galeri, profil në Google Maps.</p>
+    <li class="rate">
+      <h3>Biznesi</h3><span class="lead"></span><span class="price"><small>nga</small>€400</span>
+      <p>4–6 faqe, deri në tri gjuhë, menu ose çmimore, galeri, profil në Google Maps. Si barmartiri.com.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Premium</h3><span class="dots"></span><span class="price"><small>nga</small>€1.000</span></div>
-      <p>Dizajn unik me animacion, si kjo menu: faqja që të dallon nga të tjerët.</p>
+    <li class="rate">
+      <h3>Premium</h3><span class="lead"></span><span class="price"><small>nga</small>€1.000</span>
+      <p>Dizajn unik me animacion: faqja që të dallon nga të tjerët.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Dyqani online <em>si elixir.al</em></h3><span class="dots"></span><span class="price"><small>nga</small>€1.200</span></div>
-      <p>Katalog produktesh, shportë, porosi me WhatsApp ose pagesë në dorëzim.</p>
+    <li class="rate">
+      <h3>Dyqani online</h3><span class="lead"></span><span class="price"><small>nga</small>€1.200</span>
+      <p>Katalog produktesh, shportë, porosi me WhatsApp ose pagesë në dorëzim. Si elixir.al.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Dyqani me panel</h3><span class="dots"></span><span class="price"><small>nga</small>€2.500</span></div>
+    <li class="rate">
+      <h3>Dyqani me panel</h3><span class="lead"></span><span class="price"><small>nga</small>€2.500</span>
       <p>Panel për produktet dhe porositë, email për çdo porosi, pagesë me kartë përmes bankës.</p>
     </li>
+    <li class="rate">
+      <h3>Rregullimi i faqes</h3><span class="lead"></span><span class="price"><small>nga</small>€80</span>
+      <p>Për faqen që ke tashmë: më e shpejtë, e rregullt në telefon dhe që gjendet në Google.</p>
+    </li>
   </ul>
-  <div class="foot label"><span>Rrëshqit</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></div>
+  <div class="foot label"><span>Rrëshqit</span><svg class="arrow"><use href="#arrow"/></svg></div>
 </section>
 
-<!-- 3 · add-ons -->
+<!-- 3 · design -->
 <section class="slide" id="s3">
-  <div class="slug label"><span class="slug-mk"><img src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 3</span><span>Stefano Doko</span></div>
-  <div class="sec"><h2>Shtesat</h2><span class="no">2</span></div>
-  <p class="lede">Shtoji çdo pakete, kur të duhen.</p>
-  <ul class="menu menu--tight">
-    <li class="item">
-      <div class="row"><h3>Gjuhë shtesë</h3><span class="dots"></span><span class="price"><small>nga</small>€80</span></div>
-      <p>Italisht, gjermanisht ose çdo gjuhë për turistët.</p>
-    </li>
-    <li class="item">
-      <div class="row"><h3>Faqe shtesë</h3><span class="dots"></span><span class="price"><small>nga</small>€30</span></div>
-      <p>Një shërbim, një ofertë ose një faqe e re.</p>
-    </li>
-    <li class="item">
-      <div class="row"><h3>Logo</h3><span class="dots"></span><span class="price"><small>nga</small>€100</span></div>
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 3</span><span>Stefano Doko</span></div>
+  <div class="sec">
+    <p class="count label"><svg class="ast"><use href="#ast"/></svg>2 nga 6</p>
+    <h2 data-fit data-fit-max="150">Dizajn</h2>
+  </div>
+  <p class="lede">Logo, identitet dhe gjithçka që shkon në shtyp ose në Instagram.</p>
+  <ul class="rates">
+    <li class="rate">
+      <h3>Logo</h3><span class="lead"></span><span class="price"><small>nga</small>€100</span>
       <p>Logo e thjeshtë me ngjyrat dhe shkronjat e biznesit.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Menu për shtyp</h3><span class="dots"></span><span class="price"><small>nga</small>€50</span></div>
+    <li class="rate">
+      <h3>Identiteti i plotë</h3><span class="lead"></span><span class="price"><small>nga</small>€250</span>
+      <p>Logo, ngjyrat, shkronjat, udhëzuesi i markës dhe kartëvizita.</p>
+    </li>
+    <li class="rate">
+      <h3>Menu për shtyp</h3><span class="lead"></span><span class="price"><small>nga</small>€50</span>
       <p>Për barin ose restorantin, gati për shtypshkronjën.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Ngarkim produktesh</h3><span class="dots"></span><span class="price"><small>nga</small>€50<span class="per">/ 50 copë</span></span></div>
-      <p>Produktet në dyqan, me emër, çmim dhe përshkrim.</p>
+    <li class="rate">
+      <h3>Fletushkë ose poster</h3><span class="lead"></span><span class="price"><small>nga</small>€40</span>
+      <p>Gati për shtypshkronjën, në PDF.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Fotot e produkteve</h3><span class="dots"></span><span class="price"><small>nga</small>€1<span class="per">/ foto</span></span></div>
-      <p>Heqja e sfondit dhe pastrimi, që dyqani të duket i njëjtë.</p>
-    </li>
-    <li class="item">
-      <div class="row"><h3>Profili në Google</h3><span class="dots"></span><span class="price"><small>nga</small>€30</span></div>
-      <p>Hapja dhe verifikimi i profilit në Google Maps.</p>
-    </li>
-    <li class="item">
-      <div class="row"><h3>Shabllone për Instagram</h3><span class="dots"></span><span class="price"><small>nga</small>€50</span></div>
-      <p>Postime me stilin e biznesit, gati për t’i mbushur.</p>
+    <li class="rate">
+      <h3>Shabllone për Instagram</h3><span class="lead"></span><span class="price"><small>nga</small>€50</span>
+      <p>Si këto postime: me stilin e biznesit, gati për t’i mbushur.</p>
     </li>
   </ul>
-  <div class="foot label"><span>Rrëshqit</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></div>
+  <div class="foot label"><span>Rrëshqit</span><svg class="arrow"><use href="#arrow"/></svg></div>
 </section>
 
-<!-- 4 · monthly -->
+<!-- 4 · marketing -->
 <section class="slide" id="s4">
-  <div class="slug label"><span class="slug-mk"><img src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 4</span><span>Stefano Doko</span></div>
-  <div class="sec"><h2>Çdo muaj</h2><span class="no">3</span></div>
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 4</span><span>Stefano Doko</span></div>
+  <div class="sec">
+    <p class="count label"><svg class="ast"><use href="#ast"/></svg>3 nga 6</p>
+    <h2 data-fit data-fit-max="150">Marketing</h2>
+  </div>
+  <p class="lede">Që biznesi të gjendet në Google dhe të flasë me klientët çdo muaj.</p>
+  <ul class="rates">
+    <li class="rate">
+      <h3>Profili në Google</h3><span class="lead"></span><span class="price"><small>nga</small>€30</span>
+      <p>Hapja dhe verifikimi i profilit në Google Maps.</p>
+    </li>
+    <li class="rate">
+      <h3>Kalendari i postimeve</h3><span class="lead"></span><span class="price"><small>nga</small>€50<i>/ muaj</i></span>
+      <p>Plani i postimeve të muajit, me tekstet gati.</p>
+    </li>
+    <li class="rate">
+      <h3>Fushatë me email</h3><span class="lead"></span><span class="price"><small>nga</small>€40</span>
+      <p>Teksti dhe dizajni i një email-i për klientët e biznesit.</p>
+    </li>
+  </ul>
+  <div class="foot label"><span>Rrëshqit</span><svg class="arrow"><use href="#arrow"/></svg></div>
+</section>
+
+<!-- 5 · add-ons -->
+<section class="slide" id="s5">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 5</span><span>Stefano Doko</span></div>
+  <div class="sec">
+    <p class="count label"><svg class="ast"><use href="#ast"/></svg>4 nga 6</p>
+    <h2 data-fit data-fit-max="150">Shtesat</h2>
+  </div>
+  <p class="lede">Shtoji çdo pakete, kur të duhen.</p>
+  <ul class="rates">
+    <li class="rate">
+      <h3>Gjuhë shtesë</h3><span class="lead"></span><span class="price"><small>nga</small>€80</span>
+      <p>Italisht, gjermanisht ose çdo gjuhë për turistët.</p>
+    </li>
+    <li class="rate">
+      <h3>Faqe shtesë</h3><span class="lead"></span><span class="price"><small>nga</small>€30</span>
+      <p>Një shërbim, një ofertë ose një faqe e re.</p>
+    </li>
+    <li class="rate">
+      <h3>Ngarkim produktesh</h3><span class="lead"></span><span class="price"><small>nga</small>€50<i>/ 50 copë</i></span>
+      <p>Produktet në dyqan, me emër, çmim dhe përshkrim.</p>
+    </li>
+    <li class="rate">
+      <h3>Fotot e produkteve</h3><span class="lead"></span><span class="price"><small>nga</small>€1<i>/ foto</i></span>
+      <p>Heqja e sfondit dhe pastrimi, që dyqani të duket i njëjtë.</p>
+    </li>
+  </ul>
+  <div class="foot label"><span>Rrëshqit</span><svg class="arrow"><use href="#arrow"/></svg></div>
+</section>
+
+<!-- 6 · monthly, and the season -->
+<section class="slide" id="s6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 6</span><span>Stefano Doko</span></div>
+  <div class="sec">
+    <p class="count label"><svg class="ast"><use href="#ast"/></svg>5 nga 6</p>
+    <h2 data-fit data-fit-max="150">Çdo muaj</h2>
+  </div>
   <p class="lede">Faqja mbetet e gjallë: dikush kujdeset për të çdo muaj.</p>
-  <ul class="menu">
-    <li class="item">
-      <div class="row"><h3>Mirëmbajtja</h3><span class="dots"></span><span class="price"><small>nga</small>€10<span class="per">/ muaj</span></span></div>
+  <ul class="rates rates--six">
+    <li class="rate">
+      <h3>Mirëmbajtja</h3><span class="lead"></span><span class="price"><small>nga</small>€10<i>/ muaj</i></span>
       <p>Hostim, domain, kopje rezervë, ndryshime të vogla.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Kujdesi i biznesit</h3><span class="dots"></span><span class="price"><small>nga</small>€30<span class="per">/ muaj</span></span></div>
+    <li class="rate">
+      <h3>Kujdesi i biznesit</h3><span class="lead"></span><span class="price"><small>nga</small>€30<i>/ muaj</i></span>
       <p>Mirëmbajtja, plus një orë ndryshime dhe postime në Google.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Kujdesi i dyqanit</h3><span class="dots"></span><span class="price"><small>nga</small>€60<span class="per">/ muaj</span></span></div>
+    <li class="rate">
+      <h3>Kujdesi i dyqanit</h3><span class="lead"></span><span class="price"><small>nga</small>€60<i>/ muaj</i></span>
       <p>Produkte të reja, çmime, oferta dhe kontroll në Google.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>SEO lokale</h3><span class="dots"></span><span class="price"><small>nga</small>€80<span class="per">/ muaj</span></span></div>
+    <li class="rate">
+      <h3>SEO lokale</h3><span class="lead"></span><span class="price"><small>nga</small>€80<i>/ muaj</i></span>
       <p>Më shumë vlerësime, përmbajtje e re dhe raport çdo muaj.</p>
     </li>
-    <li class="item">
-      <div class="row"><h3>Reklama në Instagram</h3><span class="dots"></span><span class="price"><small>nga</small>€100<span class="per">/ muaj</span></span></div>
+    <li class="rate">
+      <h3>Reklama në Instagram</h3><span class="lead"></span><span class="price"><small>nga</small>€100<i>/ muaj</i></span>
       <p>Reklama në Instagram dhe Facebook. Buxheti i reklamave paguhet veçmas.</p>
     </li>
   </ul>
   <div class="special">
-    <div class="row"><h3>★ Paketa e sezonit</h3><span class="dots"></span><span class="price"><small>nga</small>€50</span></div>
-    <p>Për barët e plazhit, prill–maj: çmime, menu dhe foto të reja para verës.</p>
+    <p class="count label"><svg class="ast"><use href="#ast"/></svg>6 nga 6 · Një herë në sezon</p>
+    <div class="rate">
+      <h3>Paketa e sezonit</h3><span class="lead"></span><span class="price"><small>nga</small>€50</span>
+      <p>Për barët e plazhit, prill–maj: çmime, menu dhe foto të reja para verës.</p>
+    </div>
   </div>
-  <div class="foot label"><span>Rrëshqit</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></div>
+  <div class="foot label"><span>Rrëshqit</span><svg class="arrow"><use href="#arrow"/></svg></div>
 </section>
 
-<!-- 5 · contact -->
-<section class="slide" id="s5">
-  <div class="slug label"><span class="slug-mk"><img src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 5</span><span>Stefano Doko</span></div>
-  <div class="sec"><h2>Puna, e gjallë<br>dhe në përdorim</h2></div>
+<!-- 7 · the work, and where to write -->
+<section class="slide" id="s7">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Menuja</span><span>Faqe 7</span><span>Stefano Doko</span></div>
+  <div class="work">
+    <h2 data-fit data-fit-max="120">Puna, e gjallë</h2>
+    <h2 data-fit data-fit-max="120">dhe në përdorim</h2>
+  </div>
   <div class="proof">
     <figure>
       <div class="plate"><img src="../public/work/elixir-phone.jpg" alt="Elixir në telefon"></div>
-      <figcaption><b>elixir.al</b>Fig. 1. Parfumeri online, me dërgesë në gjithë Shqipërinë.</figcaption>
+      <figcaption><b>elixir.al</b>Parfumeri online, me dërgesë në gjithë Shqipërinë.</figcaption>
     </figure>
     <figure>
       <div class="plate"><img src="../public/work/martiri-phone.jpg" alt="Bar Martiri në telefon"></div>
-      <figcaption><b>barmartiri.com</b>Fig. 2. Bar plazhi në Spille, në tri gjuhë.</figcaption>
+      <figcaption><b>barmartiri.com</b>Bar plazhi në Spille, në tri gjuhë.</figcaption>
     </figure>
   </div>
-  <div class="write">
-    <img class="mk-big" src="../brand/final/logo/mark-tight.svg" alt="">
-    <div>
-      <h2>Zgjidh nga menuja.</h2>
-      <p class="mail">stefanodoko19@icloud.com</p>
-      <p class="lang">Në shqip ose në anglisht.</p>
-    </div>
-  </div>
-  <div class="foot label"><span>Stefano Doko</span><span class="star">★</span><span>Dizajner grafik</span></div>
+  <section class="extra">
+    <h2 data-fit>Zgjidh nga menuja.</h2>
+    <span class="mail" data-fit>stefanodoko19@icloud.com</span>
+    <p>Shkruaj në shqip ose në anglisht. Thuaj çfarë biznesi ke dhe çfarë të duhet.</p>
+    <svg class="stamp" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="98" fill="#EFE6D2" stroke="#141414" stroke-width="2.4"/>
+      <path id="ring-top" d="M24 100a76 76 0 0 1 152 0" fill="none"/>
+      <path id="ring-bottom" d="M176 100a76 76 0 0 1-152 0" fill="none"/>
+      <text><textPath href="#ring-top" startOffset="50%" text-anchor="middle" dominant-baseline="middle">SHKRUAJI STEFANOS</textPath></text>
+      <text><textPath href="#ring-bottom" startOffset="50%" text-anchor="middle" dominant-baseline="middle">WRITE TO STEFANO</textPath></text>
+      <use href="#ast" x="14" y="93" width="14" height="14" fill="#141414"/>
+      <use href="#ast" x="172" y="93" width="14" height="14" fill="#141414"/>
+      <circle cx="100" cy="100" r="54" fill="none" stroke="#141414" stroke-width="1.4"/>
+      <use href="#arrow" x="68" y="84" width="64" height="32" color="#141414"/>
+    </svg>
+  </section>
+  <div class="foot label"><span>Stefano Doko</span><svg class="ast"><use href="#ast"/></svg><span>Dizajner grafik</span></div>
 </section>
 </body>
 </html>
