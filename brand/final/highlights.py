@@ -102,9 +102,40 @@ def martiri():
             f'<path {PEN} d="M{x + 210},{y + 190} V{y + 300}"/>' + waves)
 
 
+def websites():
+    # the websites: a page's code, two angle brackets and the slash between them
+    x, y = at(0, 0)
+    return (f'<path {PEN} d="M{x + 130},{y + 90} L{x + 25},{y + 210} L{x + 130},{y + 330}"/>'
+            f'<path {PEN} d="M{x + 290},{y + 90} L{x + 395},{y + 210} L{x + 290},{y + 330}"/>'
+            f'<path {PEN} d="M{x + 245},{y + 55} L{x + 175},{y + 365}"/>')
+
+
+def design():
+    # the design: a pen's nib, its slit and its breather hole, on its holder
+    x, y = at(0, 0)
+    nib = (f'M{x + 210},{y + 25} L{x + 335},{y + 195} Q{x + 300},{y + 285} {x + 268},{y + 335} '
+           f'H{x + 152} Q{x + 120},{y + 285} {x + 85},{y + 195} Z')
+    return (f'<path {PEN} d="{nib}"/>'
+            f'<path {PEN} d="M{x + 210},{y + 90} V{y + 175}"/>'
+            f'<circle cx="{x + 210}" cy="{y + 212}" r="24" {FILL}/>'
+            f'<rect x="{x + 132}" y="{y + 350}" width="156" height="52" rx="14" {FILL}/>')
+
+
+def marketing():
+    # the marketing: a loudhailer with its handle, and the sound going out of it
+    x, y = at(0, 0)
+    return (f'<rect x="{x + 20}" y="{y + 165}" width="58" height="96" rx="12" {FILL}/>'
+            f'<path {PEN} d="M{x + 92},{y + 160} L{x + 285},{y + 80} V{y + 345} L{x + 92},{y + 266} Z"/>'
+            f'<path {PEN} d="M{x + 140},{y + 285} L{x + 168},{y + 385}"/>'
+            f'<path {PEN} d="M{x + 330},{y + 165} Q{x + 358},{y + 212} {x + 330},{y + 260}"/>'
+            f'<path {PEN} d="M{x + 372},{y + 118} Q{x + 425},{y + 212} {x + 372},{y + 307}"/>')
+
+
 COVERS = {
     'puna': work, 'rreth': about, 'sherbime': services, 'cmimet': prices,
     'kontakt': contact, 'elixir': elixir, 'bar-martiri': martiri,
+    # the menu's groups, for @sdesign.al (2026-09-26)
+    'faqe': websites, 'dizajn': design, 'marketing': marketing,
 }
 for name, fn in COVERS.items():
     (OUT / f'{name}.svg').write_text(final.svg(W, H, fn(), RED), encoding='utf-8')

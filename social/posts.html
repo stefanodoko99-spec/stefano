@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<title>SDESIGN — Instagram posts (@sdesign.al)</title>
+<style>
+/* The launch posts for @sdesign.al, 1080 x 1350, in the site's modern edition
+   (DESIGN.md) as the "Menuja" carousel is (../flyer/instagram.html): Inter for
+   what is read, Anybody for the heads, each line of a head fitted to the
+   measure (../flyer/sheet.js), one ink on newsprint. After the brand guide
+   (brand/final/guide.png): one huge headline to a slide, tightly set, one word
+   of it marked (red on paper, paper on red). The covers alternate red and
+   paper, so the profile's grid reads as a checkerboard; everything that
+   matters stays inside the 3:4 the grid shows (34px off each side).
+   Rendered by render.mjs; README.md has the order to post them in and the
+   captions. */
+@font-face { font-family: 'Anybody'; src: url('../public/fonts/Anybody-VF.woff2') format('woff2'); font-weight: 100 900; font-stretch: 50% 150%; }
+@font-face { font-family: 'Inter'; src: url('../public/fonts/Inter-VF-latin.woff2') format('woff2'); font-weight: 100 900; font-style: normal; }
+
+:root {
+  --paper: #EFE6D2; --aged: #E6DCC6; --ink: #141414; --fade: #5F584F; --alarm: #E23B2E;
+  --line: color-mix(in srgb, var(--ink) 17%, transparent);
+  --display: 'Anybody', 'Arial Narrow', sans-serif;
+  --text: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --mark: var(--alarm);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #777; color: var(--ink); font: 400 26px/1.4 var(--text); letter-spacing: -0.011em; font-variant-numeric: lining-nums; }
+.slide {
+  position: relative; width: 1080px; height: 1350px; overflow: hidden;
+  padding: 60px 72px 54px; display: flex; flex-direction: column;
+  background-color: var(--paper);
+  /* a fine grain only, as on the site */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .08 0 0 0 0 .07 0 0 0 0 .05 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* the red flood: black ink on it, the marked word and the marks in paper */
+.slide--red { background-color: var(--alarm); --mark: var(--paper); --line: color-mix(in srgb, var(--ink) 30%, transparent); }
+/* nothing on a slide gives way: a slide that is too full runs past its foot, and the renderer says so */
+.slide > * { flex-shrink: 0; }
+
+.label { font: 800 19px/1 var(--display); font-stretch: 90%; letter-spacing: .1em; text-transform: uppercase; }
+.ast { width: 24px; height: 24px; fill: var(--mark); flex: none; }
+.arrow { width: 64px; height: 32px; color: var(--ink); flex: none; }
+
+/* the date line: three cells under one rule */
+.dateline { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 3px solid var(--ink); }
+.dateline > * { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; }
+.dateline > :nth-child(2) { justify-content: center; border-left: 2px solid var(--line); border-right: 2px solid var(--line); }
+.dateline > :nth-child(3) { justify-content: flex-end; }
+.dateline .mk { height: 26px; width: auto; display: block; }
+
+/* the foot: one rule, the handle one side, the way on the other */
+.foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-top: 3px solid var(--ink); padding-top: 14px; }
+.foot > span { display: flex; align-items: center; gap: 14px; }
+.foot .handle { font: 850 24px/1 var(--display); font-stretch: 86%; letter-spacing: .01em; text-transform: none; }
+
+/* the head: each line fitted to the measure; one word marked */
+.head { display: block; }
+.ln { display: block; font: 900 150px/.84 var(--display); font-stretch: 74%; text-transform: uppercase; white-space: nowrap; }
+.ln + .ln { margin-top: 6px; }
+.ln em { font-style: normal; color: var(--mark); }
+.kicker { display: flex; align-items: center; gap: 12px; }
+.body { font-size: 38px; line-height: 1.32; letter-spacing: -0.02em; max-width: 25ch; }
+.slide--red .body { max-width: 26ch; }
+
+/* ---------- the covers: the head in the middle of the slide ---------- */
+.cover__body { margin: auto 0; padding: 30px 0; }
+.cover__body .kicker { margin-bottom: 34px; }
+.cover__body .body { margin-top: 36px; }
+
+/* ---------- a tip or a mistake: its number, its head, its line ---------- */
+.tip__no { margin-top: 44px; font: 900 340px/.8 var(--display); font-stretch: 118%; color: var(--alarm); }
+/* the words stand at the foot, the number at the head: the slide's two ends */
+.tip .head { margin-top: auto; }
+.tip .foot, .price .foot { margin-top: 0; }
+.tip .body { margin-top: 34px; margin-bottom: 48px; }
+
+/* ---------- a price: the package, the price as big as it goes ---------- */
+.price .kicker { margin-top: 56px; }
+.price__name { margin-top: 26px; font: 850 64px/1 var(--display); font-stretch: 84%; letter-spacing: .01em; text-transform: uppercase; }
+.price__amt { margin-top: auto; display: flex; align-items: flex-end; gap: 22px; }
+.price__amt small { flex: none; padding-bottom: 26px; font: 400 44px/1 var(--text); color: var(--fade); }
+.price__amt span { display: block; min-width: 0; flex: 1; font: 900 300px/.8 var(--display); font-stretch: 78%; white-space: nowrap; }
+.price .body { margin-top: 40px; margin-bottom: 48px; padding-top: 30px; border-top: 2px solid var(--line); max-width: none; }
+
+/* ---------- the work: a phone plate beside its words ---------- */
+.plate { padding: 12px; border-radius: 26px; background: var(--aged); box-shadow: inset 0 0 0 2px var(--line); }
+.plate img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 16px; }
+.work__row { margin: auto 0; display: grid; grid-template-columns: 430px minmax(0, 1fr); gap: 48px; align-items: end; }
+.work__row .plate { height: 860px; }
+.work__say .kicker { margin-bottom: 26px; }
+.work__say .ln { font-size: 120px; }
+.work__say .body { margin-top: 26px; font-size: 32px; max-width: none; }
+.work__url { margin-top: 30px; font-size: 22px; }
+/* the cover's fan of three phones */
+.fan { position: relative; height: 560px; margin-top: 48px; }
+.fan .plate { position: absolute; bottom: 0; width: 290px; height: 530px; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ink) 30%, transparent), 0 24px 40px -22px rgb(20 20 20 / .6); }
+.fan .plate:nth-child(1) { left: 30px; transform: rotate(-7deg); }
+.fan .plate:nth-child(2) { left: 323px; bottom: 18px; z-index: 1; }
+.fan .plate:nth-child(3) { right: 30px; transform: rotate(7deg); }
+
+/* ---------- the last slide: where to write ---------- */
+.cta__body { margin: auto 0; }
+.cta__body .body { margin-top: 34px; }
+.cta__row { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: 44px; }
+.cta__row .save { font: 850 30px/1.25 var(--display); font-stretch: 86%; letter-spacing: .01em; text-transform: uppercase; }
+/* the stamp's words live in its symbol: they take their type from the stamp */
+.stamp { flex: none; width: 250px; height: 250px; transform: rotate(-8deg); filter: drop-shadow(0 12px 16px rgb(20 20 20 / .35)); font: 800 15.5px/1 var(--display); font-stretch: 100%; letter-spacing: .14em; fill: var(--ink); }
+
+/* ---------- the first post: the engraving, and who is here ---------- */
+.band { margin-top: 44px; border-radius: 24px; overflow: hidden; border-bottom: 10px solid var(--ink); background: var(--alarm); }
+.band img { display: block; width: 100%; height: 280px; object-fit: cover; object-position: 50% 62%; }
+.intro .cover__body { padding-top: 40px; }
+</style>
+<script src="../flyer/sheet.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- the site's marks (partials/defs.html): the asterisk and the arrow -->
+  <symbol id="ast" viewBox="0 0 24 24">
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45"/>
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45" transform="rotate(60 12 12)"/>
+    <rect x="10.55" y="2" width="2.9" height="20" rx="1.45" transform="rotate(-60 12 12)"/>
+  </symbol>
+  <symbol id="arrow" viewBox="0 0 128 64">
+    <path d="M10 32H116M92 9l24 23-24 23" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <!-- the stamp: write to Stefano -->
+  <symbol id="stamp" viewBox="0 0 200 200">
+    <circle cx="100" cy="100" r="98" fill="#EFE6D2" stroke="#141414" stroke-width="2.4"/>
+    <path id="ring-top" d="M24 100a76 76 0 0 1 152 0" fill="none"/>
+    <path id="ring-bottom" d="M176 100a76 76 0 0 1-152 0" fill="none"/>
+    <text><textPath href="#ring-top" startOffset="50%" text-anchor="middle" dominant-baseline="middle">SHKRUAJI STEFANOS</textPath></text>
+    <text><textPath href="#ring-bottom" startOffset="50%" text-anchor="middle" dominant-baseline="middle">WRITE TO STEFANO</textPath></text>
+    <use href="#ast" x="14" y="93" width="14" height="14" fill="#141414"/>
+    <use href="#ast" x="172" y="93" width="14" height="14" fill="#141414"/>
+    <circle cx="100" cy="100" r="54" fill="none" stroke="#141414" stroke-width="1.4"/>
+    <use href="#arrow" x="68" y="84" width="64" height="32" color="#141414"/>
+  </symbol>
+</svg>
+
+<!-- ================= POST 1 · who is here (one slide) ================= -->
+<section class="slide intro" data-post="1">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Stefano Doko</span><span>Shqipëri</span></div>
+  <div class="band"><img src="../public/band-poster.jpg" alt=""></div>
+  <div class="cover__body">
+    <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Mirë se erdhe</p>
+    <h1 class="head">
+      <span class="ln" data-fit data-fit-max="170">Faqe interneti</span>
+      <span class="ln" data-fit data-fit-max="170">për bizneset që</span>
+      <span class="ln" data-fit data-fit-max="170">janë të hapura</span>
+      <span class="ln" data-fit data-fit-max="170"><em>sot.</em></span>
+    </h1>
+    <p class="body">Dizajn, faqe interneti dhe marketing, nga Stefano Doko.</p>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Dizajner grafik dhe zhvillues uebi</span></div>
+</section>
+
+<!-- ================= POST 2 · three mistakes with the menu (five slides) ================= -->
+<section class="slide slide--red" data-post="2">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight-cream.svg" alt="">Sdesign</span><span>Restorantet</span><span>1 / 5</span></div>
+  <div class="cover__body">
+    <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>3 gabime të zakonshme</p>
+    <h1 class="head">
+      <span class="ln" data-fit data-fit-max="200">Menuja jote</span>
+      <span class="ln" data-fit data-fit-max="200">po humb</span>
+      <span class="ln" data-fit data-fit-max="200"><em>klientë?</em></span>
+    </h1>
+    <p class="body">Tri gabime që bëjnë restorantet dhe barët me menunë online, dhe si ndreqen.</p>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="2">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Gabimi 1</span><span>2 / 5</span></div>
+  <p class="tip__no">1</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Menuja është</span>
+    <span class="ln" data-fit data-fit-max="150">një foto e <em>turbullt.</em></span>
+  </h2>
+  <p class="body">Klienti e hap në telefon dhe nuk lexon dot asgjë. Menuja duhet të jetë tekst: e qartë, e shpejtë, me çmime.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="2">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Gabimi 2</span><span>3 / 5</span></div>
+  <p class="tip__no">2</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Nuk ka</span>
+    <span class="ln" data-fit data-fit-max="150"><em>çmime.</em></span>
+  </h2>
+  <p class="body">Pa çmime, klienti mendon se janë të larta dhe shkon te tjetri. Çmimet e qarta sjellin klientë, jo pyetje.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="2">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Gabimi 3</span><span>4 / 5</span></div>
+  <p class="tip__no">3</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Vetëm në</span>
+    <span class="ln" data-fit data-fit-max="150"><em>shqip.</em></span>
+  </h2>
+  <p class="body">Turistët kërkojnë në anglisht, italisht, gjermanisht. Një menu në dy a tri gjuhë i sjell ata te tavolina jote.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide cta" data-post="2">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Zgjidhja</span><span>5 / 5</span></div>
+  <div class="cta__body">
+    <h2 class="head">
+      <span class="ln" data-fit data-fit-max="200">Një menu</span>
+      <span class="ln" data-fit data-fit-max="200">që <em>punon.</em></span>
+    </h2>
+    <p class="body">Në telefon, në tri gjuhë, me çmime, si barmartiri.com. Shkruaji Stefanos për tëndën.</p>
+  </div>
+  <div class="cta__row"><p class="save">Ruaje për më vonë.<br>Dërgoja një restoranti.</p><svg class="stamp" aria-hidden="true"><use href="#stamp"/></svg></div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Link në bio</span></div>
+</section>
+
+<!-- ================= POST 3 · five things every business site needs (seven slides) ================= -->
+<section class="slide" data-post="3">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Faqet e internetit</span><span>1 / 7</span></div>
+  <div class="cover__body">
+    <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Para se të bësh faqe</p>
+    <h1 class="head">
+      <span class="ln" data-fit data-fit-max="200">5 gjëra që</span>
+      <span class="ln" data-fit data-fit-max="200">i duhen çdo</span>
+      <span class="ln" data-fit data-fit-max="200">faqe <em>biznesi.</em></span>
+    </h1>
+    <p class="body">Ruaje këtë listë: do të të duhet.</p>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="3">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>1 nga 5</span><span>2 / 7</span></div>
+  <p class="tip__no">1</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Butoni i</span>
+    <span class="ln" data-fit data-fit-max="150"><em>WhatsApp.</em></span>
+  </h2>
+  <p class="body">Një prekje dhe klienti të shkruan: pa e kërkuar numrin, pa e kopjuar.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="3">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>2 nga 5</span><span>3 / 7</span></div>
+  <p class="tip__no">2</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Harta në</span>
+    <span class="ln" data-fit data-fit-max="150"><em>Google.</em></span>
+  </h2>
+  <p class="body">Ku je, kur je hapur dhe si të vijnë. Profili në Google Maps i sjell klientët te dera.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="3">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>3 nga 5</span><span>4 / 7</span></div>
+  <p class="tip__no">3</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Çmimet ose</span>
+    <span class="ln" data-fit data-fit-max="150"><em>menuja.</em></span>
+  </h2>
+  <p class="body">Klienti do të dijë sa kushton para se të shkruajë. Çmimet e qarta sjellin mesazhe më të mira.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="3">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>4 nga 5</span><span>5 / 7</span></div>
+  <p class="tip__no">4</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Punon në</span>
+    <span class="ln" data-fit data-fit-max="150"><em>telefon.</em></span>
+  </h2>
+  <p class="body">Klientët të gjejnë nga telefoni: faqja duhet të lexohet me një dorë, pa zmadhuar asgjë.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide tip" data-post="3">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>5 nga 5</span><span>6 / 7</span></div>
+  <p class="tip__no">5</p>
+  <h2 class="head">
+    <span class="ln" data-fit data-fit-max="150">Në dy</span>
+    <span class="ln" data-fit data-fit-max="150"><em>gjuhë.</em></span>
+  </h2>
+  <p class="body">Shqip dhe anglisht: për klientët e vendit dhe për turistët që të kërkojnë.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide cta" data-post="3">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Të pesta</span><span>7 / 7</span></div>
+  <div class="cta__body">
+    <h2 class="head">
+      <span class="ln" data-fit data-fit-max="200">Të pesta,</span>
+      <span class="ln" data-fit data-fit-max="200">në një <em>faqe.</em></span>
+    </h2>
+    <p class="body">Faqja e parë i ka katër prej tyre, nga €150. Biznesi i ka të pesta, nga €400.</p>
+  </div>
+  <div class="cta__row"><p class="save">Ruaje listën.<br>Shkruaji Stefanos.</p><svg class="stamp" aria-hidden="true"><use href="#stamp"/></svg></div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Link në bio</span></div>
+</section>
+
+<!-- ================= POST 4 · the work, live (five slides) ================= -->
+<section class="slide slide--red" data-post="4">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight-cream.svg" alt="">Sdesign</span><span>Punimet</span><span>1 / 5</span></div>
+  <div class="cover__body" style="padding-bottom: 0">
+    <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Faqe të vërteta, në përdorim</p>
+    <h1 class="head">
+      <span class="ln" data-fit data-fit-max="200">Punë e gjallë,</span>
+      <span class="ln" data-fit data-fit-max="200">jo <em>premtime.</em></span>
+    </h1>
+    <div class="fan">
+      <div class="plate"><img src="../public/work/elixir-phone.jpg" alt=""></div>
+      <div class="plate"><img src="../public/work/martiri-phone.jpg" alt=""></div>
+      <div class="plate"><img src="../public/work/greta-phone.jpg" alt=""></div>
+    </div>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide work" data-post="4">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Punimet</span><span>2 / 5</span></div>
+  <div class="work__row">
+    <div class="plate"><img src="../public/work/elixir-phone.jpg" alt="Elixir në telefon"></div>
+    <div class="work__say">
+      <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Parfumeri online</p>
+      <h2 class="head"><span class="ln" data-fit data-fit-max="130"><em>Elixir</em></span></h2>
+      <p class="body">Parfume designer, arabe dhe niche, me dërgesë në gjithë Shqipërinë.</p>
+      <p class="work__url label">elixir.al</p>
+    </div>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide work" data-post="4">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Punimet</span><span>3 / 5</span></div>
+  <div class="work__row">
+    <div class="plate"><img src="../public/work/martiri-phone.jpg" alt="Bar Martiri në telefon"></div>
+    <div class="work__say">
+      <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Bar plazhi në Spille</p>
+      <h2 class="head"><span class="ln" data-fit data-fit-max="130">Bar</span><span class="ln" data-fit data-fit-max="130"><em>Martiri</em></span></h2>
+      <p class="body">Akullore dhe shezlongë buzë detit, dhe një faqe në tri gjuhë.</p>
+      <p class="work__url label">barmartiri.com</p>
+    </div>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide work" data-post="4">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Punimet</span><span>4 / 5</span></div>
+  <div class="work__row">
+    <div class="plate"><img src="../public/work/greta-phone.jpg" alt="Dresses by Greta në telefon"></div>
+    <div class="work__say">
+      <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Faqja kryesore, shtator 2026</p>
+      <h2 class="head"><span class="ln" data-fit data-fit-max="130">Dresses</span><span class="ln" data-fit data-fit-max="130">by <em>Greta</em></span></h2>
+    </div>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide cta" data-post="4">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>I radhës</span><span>5 / 5</span></div>
+  <div class="cta__body">
+    <h2 class="head">
+      <span class="ln" data-fit data-fit-max="200">Biznesi yt</span>
+      <span class="ln" data-fit data-fit-max="200">është i</span>
+      <span class="ln" data-fit data-fit-max="200"><em>radhës?</em></span>
+    </h2>
+    <p class="body">Shkruaji Stefanos, në shqip ose në anglisht.</p>
+  </div>
+  <div class="cta__row"><p class="save">Faqe interneti,<br>dizajn, marketing.</p><svg class="stamp" aria-hidden="true"><use href="#stamp"/></svg></div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Link në bio</span></div>
+</section>
+
+<!-- ================= POST 6 · what a website costs (seven slides; post 5 is the "Menuja" carousel) ================= -->
+<section class="slide slide--red" data-post="6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight-cream.svg" alt="">Sdesign</span><span>Çmimet</span><span>1 / 7</span></div>
+  <div class="cover__body">
+    <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Pa sekrete</p>
+    <h1 class="head">
+      <span class="ln" data-fit data-fit-max="210">Sa kushton</span>
+      <span class="ln" data-fit data-fit-max="210">një faqe</span>
+      <span class="ln" data-fit data-fit-max="210"><em>interneti?</em></span>
+    </h1>
+    <p class="body">Pesë paketat, me çmimet e tyre. Rrëshqit dhe zgjidh.</p>
+  </div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide price" data-post="6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Paketa 1</span><span>2 / 7</span></div>
+  <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Për të filluar</p>
+  <h2 class="price__name">Faqja e parë</h2>
+  <p class="price__amt"><small>nga</small><span data-fit>€150</span></p>
+  <p class="body">Një faqe e vetme: butona për WhatsApp dhe telefon, harta në Google.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide price" data-post="6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Paketa 2</span><span>3 / 7</span></div>
+  <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Si barmartiri.com</p>
+  <h2 class="price__name">Biznesi</h2>
+  <p class="price__amt"><small>nga</small><span data-fit>€400</span></p>
+  <p class="body">4–6 faqe, deri në tri gjuhë, menu ose çmimore, galeri dhe profil në Google Maps.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide price" data-post="6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Paketa 3</span><span>4 / 7</span></div>
+  <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Që të dallon</p>
+  <h2 class="price__name">Premium</h2>
+  <p class="price__amt"><small>nga</small><span data-fit>€1.000</span></p>
+  <p class="body">Dizajn unik me animacion, si faqja e Stefanos: faqja që të dallon nga të tjerët.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide price" data-post="6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Paketa 4</span><span>5 / 7</span></div>
+  <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Si elixir.al</p>
+  <h2 class="price__name">Dyqani online</h2>
+  <p class="price__amt"><small>nga</small><span data-fit>€1.200</span></p>
+  <p class="body">Katalog produktesh, shportë, porosi me WhatsApp ose pagesë në dorëzim.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide price" data-post="6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Paketa 5</span><span>6 / 7</span></div>
+  <p class="kicker label"><svg class="ast"><use href="#ast"/></svg>Për dyqanet e mëdha</p>
+  <h2 class="price__name">Dyqani me panel</h2>
+  <p class="price__amt"><small>nga</small><span data-fit>€2.500</span></p>
+  <p class="body">Panel për produktet dhe porositë, email për çdo porosi, pagesë me kartë përmes bankës.</p>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Rrëshqit<svg class="arrow"><use href="#arrow"/></svg></span></div>
+</section>
+
+<section class="slide cta" data-post="6">
+  <div class="dateline label"><span><img class="mk" src="../brand/final/logo/mark-tight.svg" alt="">Sdesign</span><span>Çmimi i saktë</span><span>7 / 7</span></div>
+  <div class="cta__body">
+    <h2 class="head">
+      <span class="ln" data-fit data-fit-max="200">Çmimi i</span>
+      <span class="ln" data-fit data-fit-max="200"><em>saktë?</em></span>
+    </h2>
+    <p class="body">Vjen me ofertën, pasi të dimë çfarë i duhet biznesit tënd. Shkruaji Stefanos.</p>
+  </div>
+  <div class="cta__row"><p class="save">Ruaje.<br>Dërgoja dikujt<br>që ka biznes.</p><svg class="stamp" aria-hidden="true"><use href="#stamp"/></svg></div>
+  <div class="foot label"><span class="handle">@sdesign.al</span><span>Link në bio</span></div>
+</section>
+</body>
+</html>
