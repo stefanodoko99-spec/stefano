@@ -86,6 +86,7 @@ In the Claude app the launch entries are `stefano-doko` (3670), `stefano-doko-pr
   ```
 
   Then `npm run build` and `npx wrangler deploy`. Never set `DEV_LOGIN` on the deployed Worker (it is ignored off localhost anyway). The domain is added to the Worker in the Cloudflare dashboard.
+- **Deploys since 2026-09-27.** The `sdesign` Worker is connected to github.com/stefanodoko99-spec/stefano (Cloudflare Workers Builds): every push to `main` runs `npm run build` and `npx wrangler deploy` on Cloudflare, and the build's log is under the Worker's Deployments. Other branches get a preview version, not the live site. The secrets stay as they were set; a deploy by hand still works the same way.
 - **Email.** The address is `stefanodoko19@icloud.com` (given 2026-09-24). Type it in the admin (Contact): the Worker then writes it into every sheet as it is served. The HTML keeps the placeholder `hello@example.invalid` (in `partials/chrome.html`, `partials/foot.html`, `index.html`, `contact/index.html` and `404.html`), which is what a page served without the Worker shows; to change that too, replace every match. The flyer and the business card carry the placeholder separately (see Print and brand).
 - **Domain.** Build with the domain set. `tools/build-sq.mjs` then makes canonical, hreflang, `og:url` and `og:image` absolute on all twenty-four sheets, writes `dist/sitemap.xml` and adds it to `dist/robots.txt`. Without it the links stay root-relative and there is no sitemap. Don't leave a build made with a test domain in `dist/`.
 
