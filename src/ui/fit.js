@@ -20,6 +20,8 @@ export const ROLES = {
   // and its facts beside it, kept to one size band so a short fact stays level
   edition: { face: 'fat', min: 44, max: () => (state.mobile ? 120 : 260), mode: () => (state.mobile ? 'balance' : 'one') },
   fact: { face: 'var', weight: 800, prefer: 96, min: 16, max: 44, mode: () => 'one' },
+  // a trade on the front page (Websites, Design, Marketing), fitted to its own column
+  trade: { face: 'var', weight: 900, prefer: 74, min: 36, max: () => (state.mobile ? 120 : 190), mode: () => (state.mobile ? 'balance' : 'one'), grow: true },
   mail:  { face: 'var', weight: 850, prefer: 78, min: 20, max: () => (state.mobile ? 60 : 112), mode: () => 'one', parent: true, lower: true },
 };
 

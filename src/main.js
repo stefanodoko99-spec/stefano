@@ -78,7 +78,8 @@ function scrollToHash(hash, immediate = false) {
     else window.scrollTo({ top: 0, behavior: state.reduced || immediate ? 'auto' : 'smooth' });
     return;
   }
-  const el = hash && hash.length > 1 ? document.querySelector(hash) : null;
+  // a link to a group of the menu (#rates-design) opens the card at it (src/ui/site.js), read from the card's top
+  const el = hash && hash.length > 1 ? (/^#rates-[a-z]+$/.test(hash) ? document.querySelector('#rates .ratecard') : document.querySelector(hash)) : null;
   if (!el) return;
   let y;
   if (el.matches('[data-case]') && !state.mobile) {

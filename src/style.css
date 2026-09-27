@@ -318,6 +318,9 @@ ol, ul { padding: 0; list-style: none; }
 .ink__fill {
   position: absolute; left: 0; top: 0; width: 100%;
   padding: 0.5em 0 0.3em;
+  /* the window runs a little past the type: set from its left, the fill stays in
+     register with the outline even where the head is set to the right (a trade) */
+  text-align: left;
   color: var(--ink);
   transform: translateX(calc((1 - var(--p, 1)) * 100%));
   will-change: transform;
@@ -388,11 +391,11 @@ ol, ul { padding: 0; list-style: none; }
 .contents { display: grid; }
 .contents li + li { border-top: 1px solid var(--ink); }
 .contents a {
-  display: grid; grid-template-columns: 52px 1fr auto; grid-template-rows: auto auto; column-gap: 14px; align-items: center;
-  padding: 12px 0; text-decoration: none;
+  display: grid; grid-template-columns: 46px 1fr auto; grid-template-rows: auto auto; column-gap: 14px; align-items: center;
+  padding: 9px 0; text-decoration: none;
 }
 .contents__thumb {
-  grid-row: span 2; width: 52px; height: 52px; border-radius: 14px;
+  grid-row: span 2; width: 46px; height: 46px; border-radius: 14px;
   box-shadow: inset 0 0 0 1px var(--line);
   background-color: var(--aged); background-size: cover;
   display: grid; place-items: center;
@@ -515,7 +518,9 @@ ol, ul { padding: 0; list-style: none; }
   border-radius: 28px 28px 0 0;
   box-shadow: 0 -26px 48px -30px rgb(20 20 20 / 0.45);
 }
-.stack__dwell { height: 120vh; }
+/* how long a case sheet is held while it is read: its plates develop, its key's
+   rules draw and its facts are dealt over this much scroll (120vh until 2026-09-28) */
+.stack__dwell { height: 80vh; }
 .case__sheet {
   position: relative; height: 100%;
   display: grid; grid-template-rows: auto 1fr;
@@ -1098,20 +1103,161 @@ ol, ul { padding: 0; list-style: none; }
 .rate__from { font: 400 13px/1 var(--text); font-stretch: normal; letter-spacing: 0; color: var(--fade); }
 .rate__per { font: 400 14px/1 var(--text); font-stretch: normal; letter-spacing: 0; color: var(--fade); }
 
+/* ---------- what he makes (the front page, 2026-09-28): the three trades down the
+   road, one each side of the page in turn, the road crossing between them; then
+   what every client gets, and the best options on loose sheets ---------- */
+.sheet--offer { padding: 104px 0 24px; }
+.trade {
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-rows: auto auto;
+  column-gap: 56px; align-items: end;
+  margin: 56px var(--m) 0;
+}
+.trade__no, .trade__name { grid-column: 1; }
+.trade__body { grid-column: 2; grid-row: 1 / span 2; }
+.trade--flip { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.trade--flip .trade__no, .trade--flip .trade__name { grid-column: 2; }
+.trade--flip .trade__body { grid-column: 1; }
+.trade--flip .trade__no { justify-self: end; }
+.trade__no {
+  margin: 0 0 10px; display: flex; align-items: center; gap: 10px;
+  font: 800 14px/1 var(--display); font-stretch: 90%; letter-spacing: 0.12em; font-variant-numeric: tabular-nums lining-nums;
+}
+.trade__no::before { content: ''; width: 34px; height: 2px; background: var(--ink); }
+.trade__name {
+  display: block; margin: 0; min-width: 0;
+  font: 900 100px/0.84 var(--display); text-transform: uppercase; white-space: nowrap;
+}
+.trade--flip .trade__name { text-align: right; }
+.trade__body { padding-bottom: 4px; }
+.trade__line { margin: 0; max-width: 46ch; font: 400 18px/1.55 var(--text); letter-spacing: -0.011em; }
+/* the menu's lines under the trade, run in as a newspaper runs a list */
+.trade__list { display: flex; flex-wrap: wrap; margin: 14px 0 0; padding: 0; list-style: none; font: 800 12.5px/1.9 var(--display); font-stretch: 92%; letter-spacing: 0.08em; text-transform: uppercase; }
+.trade__list[hidden] { display: none; }
+.trade__item:not(:last-child)::after { content: '·'; margin: 0 9px; color: var(--fade); }
+.trade__foot {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 18px;
+  margin: 16px 0 0; padding-top: 12px; border-top: 1px solid var(--ink);
+}
+.trade__from[hidden] { display: none; }
+.trade__price { font: 900 46px/1 var(--display); font-stretch: 78%; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.trade__pre { font: 400 14px/1 var(--text); letter-spacing: 0; color: var(--fade); }
+.trade__per { font: 400 15px/1 var(--text); letter-spacing: 0; color: var(--fade); }
+.trade__foot .word[hidden] { display: none; }
+/* the road between one trade and the next */
+.trade + .lane { margin: 36px 0 0; }
+
+/* what every client gets: five short columns between two rules, as the websites' three */
+.gets { margin: 72px var(--m) 0; }
+.gets__list {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0; padding: 0; list-style: none;
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink);
+}
+.gets__item { display: grid; align-content: start; gap: 10px; padding: 22px 24px 26px; }
+.gets__item:first-child { padding-left: 0; }
+.gets__item:last-child { padding-right: 0; }
+.gets__item + .gets__item { border-left: 1px solid var(--ink); }
+.gets__head { font: 850 17px/1.1 var(--display); font-stretch: 86%; letter-spacing: 0.02em; text-transform: uppercase; }
+.gets__line { font: 400 15px/1.5 var(--text); }
+
+/* the best options: the lines ticked in the admin, each a loose sheet like the rate card, laid a little askew */
+.sheet--best { padding: 96px 0 40px; }
+.picks {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 28px;
+  margin: 40px var(--m) 0; padding: 0; list-style: none;
+}
+.pick {
+  display: flex; flex-direction: column; min-width: 0;
+  padding: 22px 28px 28px; border-radius: 26px;
+  background-color: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line), 0 20px 44px -24px rgb(20 20 20 / 0.45);
+  rotate: var(--tilt, 0deg);
+}
+.pick:nth-child(3n + 1) { --tilt: -1deg; }
+.pick:nth-child(3n + 2) { --tilt: 0.8deg; }
+.pick:nth-child(3n) { --tilt: -0.5deg; }
+.pick__strip {
+  margin: 0; padding-bottom: 12px; border-bottom: 1px solid var(--ink);
+  font: 800 13px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
+}
+.pick__name { margin: 18px 0 0; font: 900 34px/0.94 var(--display); font-stretch: 80%; text-transform: uppercase; text-wrap: balance; }
+.pick__cost { margin: 14px 0 0; }
+.pick__price { font: 900 64px/0.9 var(--display); font-stretch: 78%; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.pick__pre { font: 400 15px/1 var(--text); font-stretch: normal; letter-spacing: 0; color: var(--fade); }
+.pick__per { font: 400 16px/1 var(--text); font-stretch: normal; letter-spacing: 0; color: var(--fade); }
+.pick__desc { flex: 1; margin: 16px 0 0; font: 400 15.5px/1.5 var(--text); }
+.pick__ask { align-self: start; margin-top: 22px; }
+.picks__more { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 34px var(--m) 0; font: 400 16px/1.5 var(--text); }
+
+/* the front page's copy of the work: the fan, then the way to the work at length,
+   clear of the dealt proofs, which hang below the fan's box */
+.work__more { margin: 104px var(--m) 0; }
+.contents__thumb--offer svg { width: 34px; height: 24px; }
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .trade { column-gap: 36px; }
+  .trade__line { font-size: 17px; }
+  .gets__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gets__item, .gets__item:first-child, .gets__item:last-child { padding: 20px 22px 22px; }
+  .gets__item:nth-child(odd) { padding-left: 0; }
+  .gets__item:nth-child(even) { padding-right: 0; }
+  .gets__item + .gets__item { border-left: 0; }
+  .gets__item:nth-child(even) { border-left: 1px solid var(--ink); }
+  .gets__item:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  .gets__item:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+/* narrower than three loose sheets side by side: they run sideways, the next one showing at the edge */
+@media (max-width: 959px) {
+  .picks {
+    display: flex; gap: 16px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
+    margin: 28px 0 0; padding: 14px var(--m) 30px; scroll-padding-inline: var(--m); scrollbar-width: none;
+  }
+  .picks::-webkit-scrollbar { display: none; }
+  .pick { flex: 0 0 min(400px, 82%); scroll-snap-align: start; }
+}
+@media (max-width: 767px) {
+  .sheet--offer { padding: 56px 0 16px; }
+  .trade, .trade--flip { grid-template-columns: minmax(0, 1fr); margin-top: 36px; }
+  .trade .trade__no, .trade .trade__name, .trade .trade__body { grid-column: 1; grid-row: auto; }
+  .trade--flip .trade__no { justify-self: start; }
+  .trade--flip .trade__name { text-align: left; }
+  .trade__body { padding: 16px 0 0; }
+  .trade__line { font-size: 16.5px; }
+  .trade__price { font-size: 40px; }
+  .trade + .lane { margin-top: 28px; }
+  .gets { margin-top: 52px; }
+  .gets__list { grid-template-columns: minmax(0, 1fr); }
+  .gets__item, .gets__item:first-child, .gets__item:last-child { gap: 6px; padding: 13px 0 15px; }
+  .gets__item + .gets__item { border-left: 0; border-top: 1px solid var(--line); }
+  .gets__line { font-size: 15.5px; }
+  .sheet--best { padding: 56px 0 32px; }
+  .pick { padding: 20px 22px 24px; }
+  .pick__name { font-size: 30px; }
+  .pick__price { font-size: 54px; }
+  .pick:nth-child(3n + 1) { --tilt: -0.6deg; }
+  .pick:nth-child(3n + 2) { --tilt: 0.5deg; }
+  .pick:nth-child(3n) { --tilt: -0.3deg; }
+  .picks__more { margin-top: 10px; font-size: 15.5px; }
+  .work__more { margin-top: 24px; }
+  /* the front page on a phone: the work's fan is a little way down, so no feature above it */
+  .front__feature { display: none; }
+  .front > .front__stand { border-top: 0; padding-top: 18px; }
+}
+
 /* the portrait: a plate beside the verse, engraved by the stage; the sheet holds it */
 .sheet--about:has(> .portrait:not([hidden])) { display: flow-root; }
 .sheet--about .portrait { float: right; width: min(300px, 30%); margin: 34px var(--m) 18px 40px; }
 
-/* the calculator: the rate card's lines to tick, and what they add up to,
-   ruled off under a double line like a tariff's total */
-.calc { max-width: 920px; margin: 34px var(--m) 0; }
-.calc__how { margin: 8px 0 14px; max-width: 58ch; font: 400 15.5px/1.5 var(--text); }
-.calc__list { min-width: 0; margin: 0; padding: 0; border: 0; border-top: 1px solid var(--ink); }
-.calc__item { display: grid; grid-template-columns: 22px auto minmax(24px, 1fr) auto; align-items: last baseline; gap: 4px 12px; padding: 13px 0 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
-.calc__item input { width: 20px; height: 20px; margin: 0; align-self: center; accent-color: var(--ink); cursor: pointer; }
-.calc__name { font: 850 17px/1.15 var(--display); font-stretch: 86%; letter-spacing: 0.02em; text-transform: uppercase; }
-.calc__leader { align-self: end; margin-bottom: 5px; border-bottom: 2px dotted color-mix(in srgb, var(--ink) 40%, transparent); }
-.calc__price { font: 900 21px/1 var(--display); font-stretch: 78%; font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+/* the calculator, the rate card itself (2026-09-28): each line a box to tick,
+   in any tab, and what they add up to at the card's foot, ruled off like a
+   tariff's total */
+.calc__how { margin: 14px 0 0; max-width: 60ch; font: 400 14.5px/1.5 var(--text); color: var(--fade); }
+.rate--pick { display: block; padding: 0; }
+.rate__pick { display: grid; grid-template-columns: 20px auto minmax(24px, 1fr) auto; align-items: last baseline; gap: 3px 12px; padding: 12px 0 11px; cursor: pointer; }
+.rate__box { width: 20px; height: 20px; margin: 0; align-self: center; accent-color: var(--ink); cursor: pointer; }
+.rate--pick .rate__desc { grid-column: 2 / -1; }
+.ratecard__tab.has-ticked:not([aria-selected="true"]) .ratecard__n { color: var(--ink); font-weight: 700; }
+.calc { margin-top: 18px; }
 .calc__total {
   display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px;
   margin: 16px 0 0; padding-bottom: 12px; border-bottom: 2px solid var(--ink);
@@ -1119,12 +1265,6 @@ ol, ul { padding: 0; list-style: none; }
 }
 .calc__sum { font: 900 34px/1 var(--display); font-stretch: 76%; letter-spacing: 0; text-transform: none; font-variant-numeric: tabular-nums lining-nums; }
 .calc__note { margin: 12px 0 18px; max-width: 62ch; font: 400 13.5px/1.5 var(--text); color: var(--fade); }
-/* the calculator's groups, named as on the card */
-.calc__group { min-width: 0; margin: 0; padding: 0; border: 0; }
-.calc__head {
-  width: 100%; padding: 22px 0 9px; border-bottom: 1px solid var(--ink);
-  font: 800 12.5px/1 var(--display); letter-spacing: 0.12em; text-transform: uppercase;
-}
 
 /* graphic work: plates on a sheet of their own after the websites, each in its own
    shape (a logo square, a poster tall), in columns that start level */
@@ -1156,9 +1296,6 @@ ol, ul { padding: 0; list-style: none; }
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 767px) {
-  .calc__item { grid-template-columns: 22px minmax(0, 1fr) auto; }
-  .calc__leader { display: none; }
-  .calc__price { font-size: 19px; }
   .sheet--graphic { padding-top: 56px; }
   .gallery { grid-template-columns: minmax(0, 1fr); gap: 36px; margin-top: 28px; }
   .card__body { grid-template-columns: minmax(0, 1fr); }
@@ -1205,7 +1342,8 @@ html[data-features~='magnifier'] :is([data-plate], .portrait) { -webkit-touch-ca
   .ratecard__tabs { margin-inline: -18px; padding-inline: 18px; scroll-padding-inline: 18px; }
   .ratecard__tab { height: 38px; padding: 0 14px; }
   /* on a narrow card the name and the price keep one line; a long name takes two, led from its last */
-  .rate { gap: 3px 10px; padding: 11px 0 10px; }
+  .rate, .rate__pick { gap: 3px 10px; padding: 11px 0 10px; }
+  .rate--pick { padding: 0; }
   .rate__name { font-size: 16.5px; }
   .rate__price { font-size: 21px; }
   .rate__from, .rate__per { font-size: 12px; }

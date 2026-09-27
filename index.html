@@ -88,6 +88,7 @@
         <nav class="front__contents" aria-labelledby="contents-h">
           <h2 class="colhead" id="contents-h"><svg class="orn"><use href="#star"/></svg><span data-i18n="contentsHead">In this edition</span></h2>
           <ol class="contents">
+            <li><a href="#offer" data-spy="#offer"><span class="contents__thumb contents__thumb--offer" aria-hidden="true"><svg><use href="#sd-mark"/></svg></span><span class="contents__t" data-i18n="cOffer">What he makes</span><span class="contents__l" data-i18n="cOfferLine">Websites, design, marketing</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a></li>
             <li><a href="/work/elixir/" data-route="elixir" data-spy="#elixir"><span class="contents__thumb contents__thumb--elixir" aria-hidden="true"></span><span class="contents__t">Elixir</span><span class="contents__l" data-i18n="cElixir">Online perfume shop</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a></li>
             <li><a href="/work/bar-martiri/" data-route="martiri" data-spy="#martiri"><span class="contents__thumb contents__thumb--martiri" aria-hidden="true"></span><span class="contents__t">Bar Martiri</span><span class="contents__l" data-i18n="cMartiri">Beach bar in Spille</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a></li>
             <li><a href="/work/#greta" data-route="work" data-hash="#greta" data-spy="#greta"><span class="contents__thumb contents__thumb--greta" aria-hidden="true"></span><span class="contents__t">Dresses by Greta</span><span class="contents__l" data-i18n="cGreta">A first look</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a></li>
@@ -109,23 +110,16 @@
     <!-- The road: a lane between the sheets, crossed by the band's van (src/ui/road.js) -->
     <div class="lane" aria-hidden="true" data-lane></div>
 
+    <!-- Since 2026-09-28 the front page says what he makes, what every client
+         gets and the best options, then shows the work; the case sheets, about,
+         the languages and the whole menu are on their own pages -->
+<!-- @include sheet-offer.html -->
+
+    <div class="lane" aria-hidden="true" data-lane></div>
+
 <!-- @include sheet-work.html -->
 
-<!-- @include sheet-graphic.html -->
-
 <!-- @include sheet-quotes.html -->
-
-    <div class="lane" aria-hidden="true" data-lane></div>
-
-<!-- @include sheet-about.html -->
-
-    <div class="lane" aria-hidden="true" data-lane></div>
-
-<!-- @include sheet-services.html -->
-
-    <div class="lane" aria-hidden="true" data-lane></div>
-
-<!-- @include sheet-rates.html -->
 
     <div class="lane" aria-hidden="true" data-lane></div>
 

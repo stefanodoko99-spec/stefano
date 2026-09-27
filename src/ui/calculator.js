@@ -1,21 +1,14 @@
-// The price calculator (switched on in the admin, under the rate card): the
-// visitor ticks what the business needs and sees the rates add up, then sends
-// the list in a telegram. The telegram page writes the list into the message
-// (src/ui/telegram.js), where it stays the visitor's to finish. Only the
+// The price calculator (switched on in the admin): since 2026-09-28 it is the
+// rate card itself. Each line of the menu is a box to tick, in any tab (painted
+// by src/ui/site.js), each tab says how many of its lines are ticked, and the
+// sum stands at the card's foot, ruled off like a tariff's total, with the way
+// to send the list in a telegram. The telegram page writes the list into the
+// message (src/ui/telegram.js), where it stays the visitor's to finish. Only the
 // admin's own rates are added up, and the note under the total says it is an
 // estimate from the card, not an offer.
 import { state, bus } from '../state.js';
 import { pathFor } from '../routes.js';
-import { site, has, money, pick, priceText, priceOnly, perOf, rateGroups } from './site.js';
-
-const el = (tag, cls, text) => {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  if (text !== undefined) e.textContent = text;
-  return e;
-};
-
-const priceOf = priceText;
+import { site, has, money, pick, priceText, perOf, ticked } from './site.js';
 
 /**
  * The ticked rates' total: "from" when any of them is a starting price. The
@@ -36,61 +29,44 @@ export function totalText(T, lang, items) {
 export function orderText(T, lang, picked) {
   const items = picked.map((i) => site.rates?.items[i]).filter(Boolean);
   if (!items.length) return '';
-  const lines = items.map((it) => `— ${pick(it.name, lang)} (${priceOf(T, lang, it)})`);
+  const lines = items.map((it) => `— ${pick(it.name, lang)} (${priceText(T, lang, it)})`);
   return `${T.calcWant}\n${lines.join('\n')}\n${T.calcSum(totalText(T, lang, items))}\n\n`;
 }
 
 export function initCalculator() {
-  const form = document.querySelector('[data-calc]');
-  if (!form || !has('calculator') || !site.rates?.items.length) return;
-  form.hidden = false;
-  const list = form.querySelector('[data-calc-list]');
-  const out = form.querySelector('[data-calc-total]');
-  const send = form.querySelector('[data-calc-send]');
-  const picked = () => [...list.querySelectorAll('input:checked')].map((b) => Number(b.value));
+  const card = document.querySelector('[data-optional="rates"] .ratecard');
+  const foot = card?.querySelector('[data-calc]');
+  if (!foot || !has('calculator') || !site.rates?.items.length) return;
+  foot.hidden = false;
+  card.querySelector('[data-calc-how]').hidden = false;
+  const out = foot.querySelector('[data-calc-total]');
+  const send = foot.querySelector('[data-calc-send]');
 
   const update = () => {
     const T = state.T;
     const lang = state.lang;
-    const ids = picked();
+    const ids = [...ticked].sort((a, b) => a - b);
     const items = ids.map((i) => site.rates.items[i]).filter(Boolean);
     out.textContent = items.length ? totalText(T, lang, items) : T.calcNone;
     send.hidden = !items.length;
     send.href = `${pathFor('contact', lang)}?rates=${ids.join(',')}`;
+    // each tab: how many of its lines are ticked, else how many it has
+    card.querySelectorAll('.ratecard__tab').forEach((tab) => {
+      const panel = document.getElementById(tab.getAttribute('aria-controls'));
+      const n = panel?.querySelectorAll('.rate__box').length ?? 0;
+      const t = panel?.querySelectorAll('.rate__box:checked').length ?? 0;
+      const count = tab.querySelector('.ratecard__n');
+      if (count) count.textContent = t ? `✓ ${t}` : String(n);
+      tab.classList.toggle('has-ticked', t > 0);
+    });
   };
-  // the card's rates as lines to tick, kept ticked across a language switch
-  const paint = () => {
-    const T = state.T;
-    const lang = state.lang;
-    const ticked = new Set(picked());
-    const legend = list.querySelector(':scope > legend');
-    const line = (it, i) => {
-      const row = el('label', 'calc__item');
-      const box = el('input');
-      box.type = 'checkbox';
-      box.name = 'rate';
-      box.value = String(i);
-      box.checked = ticked.has(i);
-      const leader = el('span', 'calc__leader');
-      leader.setAttribute('aria-hidden', 'true');
-      // the price as on the card: its unit set apart, quieter
-      const price = el('span', 'calc__price', priceOnly(T, lang, it));
-      const per = perOf(T, lang, it);
-      if (per) price.append(el('span', 'rate__per', ` / ${per}`));
-      row.append(box, el('span', 'calc__name', pick(it.name, lang)), leader, price);
-      return row;
-    };
-    // grouped as on the card, each group a set of its own that names it
-    list.replaceChildren(legend, ...rateGroups(site.rates.items).flatMap(([group, rows]) => {
-      if (!group) return rows.map(([it, i]) => line(it, i));
-      const set = el('fieldset', 'calc__group');
-      set.append(el('legend', 'calc__head', T.rateGroups[group]), ...rows.map(([it, i]) => line(it, i)));
-      return [set];
-    }));
+  card.addEventListener('change', (e) => {
+    const box = e.target.closest?.('.rate__box');
+    if (!box) return;
+    if (box.checked) ticked.add(Number(box.value)); else ticked.delete(Number(box.value));
     update();
-  };
-  list.addEventListener('change', update);
-  form.addEventListener('submit', (e) => e.preventDefault());
-  paint();
-  bus.on('lang', paint);
+  });
+  update();
+  // the card is set again in the new language, its lines ticked as they were
+  bus.on('lang', update);
 }

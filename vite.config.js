@@ -29,14 +29,21 @@ const pages = {
 // part of the front page is set once for the front page and for its own page.
 // A part that leads its own page (<!-- @include sheet-work.html lead -->) opens
 // with the dateline, and its head is the page's h1, inked as the page opens;
-// on the front page the same markers leave the part exactly as it was.
+// on the front page the same markers leave the part exactly as it was. What
+// only the front page's copy says is set between <!-- front --> and
+// <!-- /front -->, and what only the part's own page says between <!-- page -->
+// and <!-- /page -->.
 const LEAD = { LEAD_CLASS: ' sheet--lead', LEAD_TOP: '<!-- @include dateline.html -->\n\n', H: '1', SUB: '2', HEAD_CLASS: ' sheethead--page', HEAD_SOURCE: ' data-ink-source="intro"' };
 const PLAIN = { LEAD_CLASS: '', LEAD_TOP: '', H: '2', SUB: '3', HEAD_CLASS: '', HEAD_SOURCE: '' };
+const only = (html, keep, drop) => html
+  .replace(new RegExp(`[ \\t]*<!--\\s*${drop}\\s*-->[\\s\\S]*?<!--\\s*/${drop}\\s*-->\\n?`, 'g'), '')
+  .replace(new RegExp(`<!--\\s*/?${keep}\\s*-->`, 'g'), '');
 function partials() {
   const dir = resolve(root, 'partials');
   const include = (html) => html.replace(/<!--\s*@include\s+([\w.-]+)(\s+lead)?\s*-->/g, (_, file, lead) => {
     const vars = lead ? LEAD : PLAIN;
-    return include(fs.readFileSync(resolve(dir, file), 'utf8').replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (k in vars ? vars[k] : m)));
+    const part = fs.readFileSync(resolve(dir, file), 'utf8').replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (k in vars ? vars[k] : m));
+    return include(lead ? only(part, 'page', 'front') : only(part, 'front', 'page'));
   });
   return {
     name: 'sheet-partials',

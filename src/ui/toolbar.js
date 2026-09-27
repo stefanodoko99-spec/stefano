@@ -48,10 +48,10 @@ export function startClock() {
 }
 
 // ---------- pill, read states, current section ----------
-const tracked = ['work', 'elixir', 'martiri', 'greta', 'graphic', 'quotes', 'about', 'services', 'rates', 'contact', 'back'];
+const tracked = ['offer', 'best', 'work', 'elixir', 'martiri', 'greta', 'graphic', 'quotes', 'about', 'services', 'rates', 'contact', 'back'];
 // the case sheets and the graphic work belong to the work, the rates to the websites; the letters have no word of their own
 const CASES = new Set(['elixir', 'martiri', 'greta', 'graphic']);
-const NAV_OF = { rates: 'services', quotes: null, back: null };
+const NAV_OF = { offer: 'services', best: 'services', rates: 'services', quotes: null, back: null };
 
 export function initNav() {
   const pill = $('[data-pill]');

@@ -13,6 +13,7 @@ import { pathFor } from '../routes.js';
 import { vcard } from '../../shared/vcard.js';
 import { RATE_GROUPS, defaults, publicView } from '../../shared/settings.js';
 import { qrElement } from './qr.js';
+import { paintOffer } from './offer.js';
 
 export const site = { email: '', live: new Set(), whatsapp: '', availability: null, links: [], rates: null, portrait: null, graphic: [], quotes: [], greta: null, counted: false, inbox: false };
 export const has = (f) => site.live.has(f);
@@ -129,8 +130,12 @@ function paintAvailability(T) {
   });
 }
 
-// the group the menu shows, kept when the language changes
-let shownGroup = null;
+// the group the menu shows, kept when the language changes; a link to a
+// group (/services/#rates-design) opens the card at it
+let shownGroup = /^#rates-([a-z]+)$/.exec(location.hash)?.[1] ?? null;
+
+/** The lines ticked on the card, by their place on it (the calculator, src/ui/calculator.js). */
+export const ticked = new Set();
 
 function paintRates(T, lang) {
   const sec = document.querySelector('[data-optional="rates"]');
@@ -138,8 +143,10 @@ function paintRates(T, lang) {
   const on = has('rates') && !!site.rates && site.rates.items.length > 0;
   sec.hidden = !on;
   if (!on) return;
-  const rate = (it) => {
-    const li = el('li', 'rate');
+  // with the calculator on, every line is a box to tick, the whole line its label
+  const pickable = has('calculator');
+  const rate = (it, i) => {
+    const li = el('li', pickable ? 'rate rate--pick' : 'rate');
     const desc = pick(it.desc, lang);
     const leader = el('span', 'rate__leader');
     leader.setAttribute('aria-hidden', 'true');
@@ -149,8 +156,19 @@ function paintRates(T, lang) {
     price.append(money(it.price, site.rates.currency, lang));
     const per = perOf(T, lang, it);
     if (per) price.append(el('span', 'rate__per', ` / ${per}`));
-    li.append(el('span', 'rate__name', pick(it.name, lang)), leader, price);
-    if (desc) li.append(el('span', 'rate__desc', desc));
+    const parts = [el('span', 'rate__name', pick(it.name, lang)), leader, price];
+    if (desc) parts.push(el('span', 'rate__desc', desc));
+    if (!pickable) {
+      li.append(...parts);
+      return li;
+    }
+    const label = el('label', 'rate__pick');
+    const box = el('input', 'rate__box');
+    box.type = 'checkbox';
+    box.value = String(i);
+    box.checked = ticked.has(i);
+    label.append(box, ...parts);
+    li.append(label);
     return li;
   };
   // The menu, compact: a tab for each group (the rates in no group first,
@@ -163,7 +181,7 @@ function paintRates(T, lang) {
     const panel = el('div', 'ratecard__panel');
     panel.id = `rates-${group || 'top'}`;
     const ol = el('ol', 'ratecard__list');
-    ol.append(...list.map(([it]) => rate(it)));
+    ol.append(...list.map(([it, i]) => rate(it, i)));
     panel.append(ol);
     return panel;
   });
@@ -370,6 +388,7 @@ export function applySite(T = state.T) {
   paintLinks();
   paintCard(lang);
   paintRates(T, lang);
+  paintOffer(T, lang);
   paintGraphic(T, lang);
   paintQuotes(T, lang);
   paintPortrait(T, lang);

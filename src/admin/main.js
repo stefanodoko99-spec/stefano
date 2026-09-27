@@ -446,7 +446,11 @@ function rates() {
           field({ id: `rate-${it.id}-price`, label: `${R.price} (${r.currency})`, path: `rates.items.${i}.price`, control: input(it.price === 0 && !it.name.en && !it.name.sq ? '' : String(it.price ?? ''), (v) => { it.price = v; }, { inputmode: 'numeric', maxlength: '14' }) }),
           h('label', { class: 'adm-check-input' },
             h('input', { type: 'checkbox', checked: it.from === true, onchange: (e) => { it.from = e.target.checked; changed(); } }),
-            h('span', { text: R.from }))),
+            h('span', { text: R.from })),
+          // the best options are offered first, on the front page
+          h('label', { class: 'adm-check-input' },
+            h('input', { type: 'checkbox', checked: it.best === true, onchange: (e) => { it.best = e.target.checked; changed(); } }),
+            h('span', { text: R.best }))),
         pair({ id: `rate-${it.id}-unit`, label: R.unit, obj: it.unit, max: LIMITS.unit, helpText: R.unitHelp }),
         listButtons(r.items, i, paint));
     }) : [h('p', { class: 'adm-help', text: R.empty })]));
@@ -458,7 +462,7 @@ function rates() {
   const add = h('button', {
     type: 'button', class: 'adm-btn adm-btn--line',
     // a new rate goes in the group of the one before it, so a group is typed in a row
-    onclick: () => { r.items.push({ id: newId(), name: blankLangs(), desc: blankLangs(), unit: blankLangs(), price: '', from: false, group: r.items.at(-1)?.group || '' }); changed(); paint(); list.lastElementChild?.querySelector('input')?.focus(); },
+    onclick: () => { r.items.push({ id: newId(), name: blankLangs(), desc: blankLangs(), unit: blankLangs(), price: '', from: false, best: false, group: r.items.at(-1)?.group || '' }); changed(); paint(); list.lastElementChild?.querySelector('input')?.focus(); },
     text: R.add,
   });
   const currency = h('select', { class: 'adm-input adm-input--select', onchange: (e) => { r.currency = e.target.value; changed(); paint(); } },

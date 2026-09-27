@@ -1,0 +1,63 @@
+    <!-- WHAT HE MAKES: the three trades, one after another down the road, each
+         with what it brings, the menu's lines under it and the price they start
+         from (src/ui/offer.js, from the rates); then what every client gets -->
+    <section class="sheet sheet--offer" id="offer" aria-labelledby="offer-h">
+      <h2 class="sheethead" id="offer-h" data-fit="head" data-ink="offer"><span data-i18n="offerHead">What Stefano makes.</span></h2>
+      <p class="sheet__lede" data-feed data-i18n="offerLine">One person for the three things a business shows the world: its website, its look, and the way customers find it.</p>
+
+      <article class="trade" data-trade="sites" aria-labelledby="trade-sites-h">
+        <p class="trade__no" aria-hidden="true">01</p>
+        <h3 class="trade__name" id="trade-sites-h" data-fit="trade" data-ink="trade-sites"><span data-i18n="tradeSites">Websites</span></h3>
+        <div class="trade__body">
+          <p class="trade__line" data-i18n="tradeSitesLine">From one page with the WhatsApp button to the shop that takes orders, designed and coded by him, front end and back end.</p>
+          <ul class="trade__list" data-trade-list hidden></ul>
+          <p class="trade__foot"><span class="trade__from" data-trade-from hidden></span><a class="word" href="/services/#rates-sites" data-route="services" data-hash="#rates-sites" data-i18n="tradePrices">The prices</a></p>
+        </div>
+      </article>
+
+      <div class="lane" aria-hidden="true" data-lane></div>
+
+      <article class="trade trade--flip" data-trade="design" aria-labelledby="trade-design-h">
+        <p class="trade__no" aria-hidden="true">02</p>
+        <h3 class="trade__name" id="trade-design-h" data-fit="trade" data-ink="trade-design"><span data-i18n="tradeDesign">Design</span></h3>
+        <div class="trade__body">
+          <p class="trade__line" data-i18n="tradeDesignLine">The logo, the colours and the letters of the business, the menu and the flyer ready for the printer, and posts in its own style.</p>
+          <ul class="trade__list" data-trade-list hidden></ul>
+          <p class="trade__foot"><span class="trade__from" data-trade-from hidden></span><a class="word" href="/services/#rates-design" data-route="services" data-hash="#rates-design" data-i18n="tradePrices">The prices</a></p>
+        </div>
+      </article>
+
+      <div class="lane" aria-hidden="true" data-lane></div>
+
+      <article class="trade" data-trade="marketing" aria-labelledby="trade-marketing-h">
+        <p class="trade__no" aria-hidden="true">03</p>
+        <h3 class="trade__name" id="trade-marketing-h" data-fit="trade" data-ink="trade-marketing"><span data-i18n="tradeMarketing">Marketing</span></h3>
+        <div class="trade__body">
+          <p class="trade__line" data-i18n="tradeMarketingLine">The business on Google Maps and on Instagram, its posts planned month by month, and an email to the customers it already has.</p>
+          <ul class="trade__list" data-trade-list hidden></ul>
+          <p class="trade__foot"><span class="trade__from" data-trade-from hidden></span><a class="word" href="/services/#rates-marketing" data-route="services" data-hash="#rates-marketing" data-i18n="tradePrices">The prices</a></p>
+        </div>
+      </article>
+
+      <!-- what comes with the work, whichever it is -->
+      <div class="gets">
+        <h3 class="colhead" id="gets-h"><svg class="orn" aria-hidden="true"><use href="#star"/></svg><span data-i18n="getsHead">What every client gets</span></h3>
+        <ol class="gets__list" aria-labelledby="gets-h">
+          <li class="gets__item"><b class="gets__head" data-i18n-list="getsHeads.0">One person, start to finish</b><span class="gets__line" data-i18n-list="getsLines.0">Stefano designs it and writes its code: you talk to the one who makes it.</span></li>
+          <li class="gets__item"><b class="gets__head" data-i18n-list="getsHeads.1">The price first</b><span class="gets__line" data-i18n-list="getsLines.1">Say what the business needs; the exact price comes with the offer, before the work begins.</span></li>
+          <li class="gets__item"><b class="gets__head" data-i18n-list="getsHeads.2">Made for the phone</b><span class="gets__line" data-i18n-list="getsLines.2">Every page set for the phone and the big screen, and kept quick on a phone.</span></li>
+          <li class="gets__item"><b class="gets__head" data-i18n-list="getsHeads.3">Customers one tap away</b><span class="gets__line" data-i18n-list="getsLines.3">WhatsApp, the phone and the map, where a customer looks for them.</span></li>
+          <li class="gets__item"><b class="gets__head" data-i18n-list="getsHeads.4">Care, if you want it</b><span class="gets__line" data-i18n-list="getsLines.4">Hosting, the domain, backups and small changes, every month.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- THE BEST OPTIONS: the menu's lines ticked in the admin as the best, offered
+         first, each a loose sheet that asks for an offer in a telegram (src/ui/offer.js);
+         shown only with the rate card on and a line ticked -->
+    <section class="sheet sheet--best" id="best" aria-labelledby="best-h" data-best hidden>
+      <h2 class="sheethead" id="best-h" data-fit="head" data-ink="best"><span data-i18n="bestHead">The best options.</span></h2>
+      <p class="sheet__lede" data-feed data-i18n="bestLine">Picked from the menu to start with. The exact price comes with the offer.</p>
+      <ol class="picks" data-picks></ol>
+      <p class="picks__more"><span data-i18n="bestMore">Every service and its price, in one menu.</span> <a class="word" href="/services/#rates" data-route="services" data-hash="#rates" data-i18n="bestMenu">The whole menu</a></p>
+    </section>

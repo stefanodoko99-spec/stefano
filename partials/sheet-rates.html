@@ -4,17 +4,15 @@
       <p class="sheet__lede" data-i18n="ratesLine">Every service and the price it starts from, in one menu.</p>
       <div class="ratecard">
         <p class="ratecard__strip"><span class="ratecard__kind" data-i18n="ratesKind">The menu</span><span>Stefano Doko, <span data-i18n="zone">Albania</span></span></p>
+        <!-- the calculator (switched on in the admin) is the card itself: its lines are ticked in any tab, and add up at its foot -->
+        <p class="calc__how" data-calc-how data-i18n="calcHow" hidden>Tick what the business needs, in any group: the sum is at the foot of the menu.</p>
         <div class="ratecard__tabs" data-rates-tabs hidden></div>
         <div class="ratecard__lists" data-rates-list></div>
         <p class="ratecard__note" data-rates-note hidden></p>
+        <div class="calc" data-calc hidden>
+          <p class="calc__total"><span data-i18n="calcTotal">Estimate</span> <output class="calc__sum" aria-live="polite" data-calc-total></output></p>
+          <p class="calc__note" data-i18n="calcNote">An estimate from the rate card, not an offer: Stefano answers with the real price.</p>
+          <a class="btn btn--ink" href="/contact/" data-calc-send hidden><span data-i18n="calcSend">Send it with a telegram</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a>
+        </div>
       </div>
-      <!-- the calculator: switched on in the admin, under the rate card it adds up -->
-      <form class="calc" aria-labelledby="calc-h" data-optional="calculator" data-calc hidden>
-        <h3 class="colhead" id="calc-h"><svg class="orn" aria-hidden="true"><use href="#star"/></svg><span data-i18n="calcHead">What would it cost?</span></h3>
-        <p class="calc__how" id="calc-how" data-i18n="calcHow">Tick what the business needs: the rates above add up here.</p>
-        <fieldset class="calc__list" aria-describedby="calc-how" data-calc-list><legend class="sr-only" data-i18n="calcHead">What would it cost?</legend></fieldset>
-        <p class="calc__total"><span data-i18n="calcTotal">Estimate</span> <output class="calc__sum" aria-live="polite" data-calc-total></output></p>
-        <p class="calc__note" data-i18n="calcNote">An estimate from the rate card, not an offer: Stefano answers with the real price.</p>
-        <a class="btn btn--ink" href="/contact/" data-calc-send><span data-i18n="calcSend">Send it with a telegram</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a>
-      </form>
     </section>

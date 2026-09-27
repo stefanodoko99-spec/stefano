@@ -96,7 +96,7 @@ r = await req('PUT', '/api/admin/settings', {
     rates: {
       currency: 'ALL', note: { en: 'Test note', sq: 'Shënim prove' },
       items: [
-        { name: { en: 'Test rate', sq: 'Çmim prove' }, desc: { en: 'A test', sq: 'Një provë' }, price: '12 000', from: true, group: 'extras', unit: { en: '  photo ', sq: 'foto' } },
+        { name: { en: 'Test rate', sq: 'Çmim prove' }, desc: { en: 'A test', sq: 'Një provë' }, price: '12 000', from: true, best: true, group: 'extras', unit: { en: '  photo ', sq: 'foto' } },
         { name: { en: '', sq: '' }, desc: { en: '', sq: '' }, price: '' },
       ],
     },
@@ -113,6 +113,7 @@ const saved = r.data.settings || {};
 check(saved.whatsapp === '355690000000', 'the number is stored as digits', saved.whatsapp);
 check(saved.rates?.items?.length === 1 && saved.rates.items[0].price === 12000, 'the blank rate row is dropped, the price read as 12000');
 check(saved.rates?.items?.[0]?.group === 'extras' && saved.rates.items[0].unit?.en === 'photo' && saved.rates.items[0].unit?.sq === 'foto', 'a rate keeps its group and its unit, trimmed', JSON.stringify(saved.rates?.items?.[0]));
+check(saved.rates?.items?.[0]?.best === true, 'a rate keeps its tick as a best option');
 check(saved.greta?.url === 'https://greta.example.com/', 'the link is made https', saved.greta?.url);
 check(saved.portrait?.key === before.portrait.key, 'a portrait file cannot be set by a save');
 const st = r.data.status || {};
@@ -126,6 +127,7 @@ check(pub.email === 'test@stefano-doko.invalid.test', 'the page carries the emai
 check(!html.includes('mailto:hello@example.invalid') && !/>\s*hello@example\.invalid\s*</.test(html), 'no placeholder is left in the page');
 check(/<html[^>]*data-features="[^"]*rates[^"]*"/.test(html) && !/data-features="[^"]*portrait/.test(html), 'the html element names what is live, not the portrait');
 check(pub.quotes.length === 1 && pub.quotes[0].name === 'Test Person', 'only the quote with permission reaches the page');
+check(pub.rates?.items?.[0]?.best === true && html.includes('data-best'), 'the front page knows the best options, and has their place');
 check(!html.includes(trap) && html.includes('\\u003c/script>'), 'a quote cannot close the settings script');
 check(pub.greta?.host === 'greta.example.com', 'the page knows the link and its host');
 check(pub.availability?.from === '2099-10', 'the page knows the month of availability', JSON.stringify(pub.availability));

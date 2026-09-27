@@ -1,7 +1,8 @@
     <!-- THE WORK -->
     <section class="sheet sheet--work{{LEAD_CLASS}}" id="work" aria-labelledby="work-h">
 {{LEAD_TOP}}      <h{{H}} class="sheethead{{HEAD_CLASS}}" id="work-h" data-fit="head" data-ink="work"{{HEAD_SOURCE}}><span data-i18n="workHead">The work, live and in use.</span></h{{H}}>
-      <p class="sheet__lede" data-feed data-i18n="workLine">Three sites, two of them open for business. Check those yourself, then look closer below.</p>
+      <!-- page --><p class="sheet__lede" data-feed data-i18n="workLine">Three sites, two of them open for business. Check those yourself, then look closer below.</p><!-- /page -->
+      <!-- front --><p class="sheet__lede" data-feed data-i18n="workLineFront">Three sites, two of them open for business. Check those yourself, or open each one up close.</p><!-- /front -->
       <div class="fan" data-fan>
         <a class="fan__card" href="/work/elixir/" data-route="elixir" style="--i:0"><span class="fan__sheet"><img src="/work/elixir-desktop.jpg" width="1440" height="900" alt="" loading="lazy" decoding="async"><span class="fan__cap" data-i18n-list="fan.0">Elixir, home page</span></span></a>
         <a class="fan__card fan__card--tall" href="/work/elixir/" data-route="elixir" style="--i:1"><span class="fan__sheet"><img src="/work/elixir-phone.jpg" width="780" height="1688" alt="" loading="lazy" decoding="async"><span class="fan__cap" data-i18n-list="fan.1">Elixir, on a phone</span></span></a>
@@ -15,92 +16,5 @@
         <span class="fan__count" data-fan-count aria-hidden="true"></span>
         <button class="fan__step" type="button" data-fan-step="1" aria-label="Next screenshot" data-i18n-attr="aria-label:fanNext"><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></button>
       </div>
+      <!-- front --><p class="work__more"><a class="btn btn--line" href="/work/" data-route="work"><span data-i18n="workMore">All the work, up close</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a></p><!-- /front -->
     </section>
-
-    <!-- The case sheets: each new broadside is laid over the last -->
-    <div class="stack" data-stack>
-      <article class="case" id="elixir" aria-labelledby="elixir-h" data-case>
-        <div class="case__sheet">
-          <header class="case__head">
-            <h2 class="case__title" id="elixir-h" data-fit="case" data-ink="elixir">Elixir</h2>
-            <ul class="facts" data-facts>
-            <li class="fact" data-i18n-list="elixirFacts.0">Online perfume shop</li>
-            <li class="fact" data-i18n-list="elixirFacts.1">Designer, Arabic and niche</li>
-            <li class="fact" data-i18n-list="elixirFacts.2">Delivered across Albania</li>
-            </ul>
-            <div class="case__meta">
-              <p class="case__line" data-feed data-i18n="elixirLine">An online perfume shop: designer, Arabic and niche fragrances, delivered across Albania.</p>
-              <a class="btn btn--line case__visit" href="https://elixir.al" target="_blank" rel="noopener"><span data-i18n="elixirVisit">Visit elixir.al</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a>
-              <a class="word case__more" href="/work/elixir/" data-route="elixir" data-i18n="wholeCase">The whole case</a>
-            </div>
-          </header>
-          <div class="case__body">
-            <figure class="plate plate--wide" data-plate="elixir-desktop">
-              <div class="plate__mount"><img src="/work/elixir-desktop.jpg" width="1440" height="900" alt="The Elixir home page: a free-delivery bar, search in the header, nine category shelves, a Didone headline and a wine-red button." data-i18n-attr="alt:exAlt1" loading="lazy" decoding="async"></div>
-              <figcaption class="plate__cap" data-i18n="elixirFig1">Fig. 1. The home page, September 2026.</figcaption>
-            </figure>
-            <figure class="plate plate--tall" data-plate="elixir-phone">
-              <div class="plate__mount"><img src="/work/elixir-phone.jpg" width="780" height="1688" alt="Elixir on a phone, with the tab bar at the bottom and four ways into the shop." data-i18n-attr="alt:elixirAlt2" loading="lazy" decoding="async"></div>
-              <figcaption class="plate__cap" data-i18n="elixirFig2">Fig. 2. On a phone.</figcaption>
-            </figure>
-            <svg class="callouts" data-callouts="elixir" aria-hidden="true"></svg>
-          </div>
-          <aside class="proof-note proof-note--cases" data-note="cases"><span>Nothing invented: two live sites, checked in September 2026.</span></aside>
-        </div>
-      </article>
-      <div class="stack__dwell" aria-hidden="true"></div>
-
-      <article class="case" id="martiri" aria-labelledby="martiri-h" data-case>
-        <div class="case__sheet">
-          <header class="case__head">
-            <h2 class="case__title" id="martiri-h" data-fit="case" data-ink="martiri">Bar Martiri</h2>
-            <ul class="facts" data-facts>
-            <li class="fact" data-i18n-list="martiriFacts.0">Beach bar in Spille</li>
-            <li class="fact" data-i18n-list="martiriFacts.1">Ice cream and sunbeds</li>
-            <li class="fact" data-i18n-list="martiriFacts.2">Three languages</li>
-            </ul>
-            <div class="case__meta">
-              <p class="case__line" data-feed data-i18n="martiriLine">Bar Martiri in Spille: ice cream and sunbeds by the sea, in three languages.</p>
-              <a class="btn btn--line case__visit" href="https://barmartiri.com" target="_blank" rel="noopener"><span data-i18n="martiriVisit">Visit barmartiri.com</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a>
-              <a class="word case__more" href="/work/bar-martiri/" data-route="martiri" data-i18n="wholeCase">The whole case</a>
-            </div>
-          </header>
-          <div class="case__body">
-            <figure class="plate plate--wide" data-plate="martiri-desktop">
-              <div class="plate__mount"><img src="/work/martiri-desktop.jpg" width="1440" height="900" alt="The Bar Martiri home page: a language switch, a large serif headline, menu and call buttons, and a floating tab bar." data-i18n-attr="alt:mtAlt1" loading="lazy" decoding="async"></div>
-              <figcaption class="plate__cap" data-i18n="martiriFig1">Fig. 3. The home page, September 2026.</figcaption>
-            </figure>
-            <figure class="plate plate--tall" data-plate="martiri-phone">
-              <div class="plate__mount"><img src="/work/martiri-phone.jpg" width="780" height="1688" alt="Bar Martiri on a phone, with a photo of the beach and a WhatsApp button." data-i18n-attr="alt:martiriAlt2" loading="lazy" decoding="async"></div>
-              <figcaption class="plate__cap" data-i18n="martiriFig2">Fig. 4. On a phone.</figcaption>
-            </figure>
-            <svg class="callouts" data-callouts="martiri" aria-hidden="true"></svg>
-          </div>
-        </div>
-      </article>
-      <div class="stack__dwell" aria-hidden="true"></div>
-
-      <!-- shown by name and preview only: its own domain comes later, so no address and no facts -->
-      <article class="case case--preview" id="greta" aria-labelledby="greta-h" data-case>
-        <div class="case__sheet">
-          <header class="case__head">
-            <h2 class="case__title" id="greta-h" data-fit="case" data-ink="greta">Dresses by Greta</h2>
-            <!-- the visit link: shown once her domain is set in the admin -->
-            <div class="case__meta" data-greta-meta hidden>
-              <a class="btn btn--line case__visit" href="#" target="_blank" rel="noopener"><span data-greta-label>Visit</span><svg class="hand" aria-hidden="true"><use href="#hand"/></svg></a>
-            </div>
-          </header>
-          <div class="case__body">
-            <figure class="plate plate--wide" data-plate="greta-home">
-              <div class="plate__mount"><img src="/work/greta-home.jpg" width="1440" height="900" alt="The Dresses by Greta home page: a full-screen photo of a sequined blue dress, the name in wide capitals and a button to see the dresses." data-i18n-attr="alt:gretaAlt1" loading="lazy" decoding="async"></div>
-              <figcaption class="plate__cap" data-i18n="gretaFig1">Fig. 5. The home page, September 2026.</figcaption>
-            </figure>
-            <figure class="plate plate--tall" data-plate="greta-phone">
-              <div class="plate__mount"><img src="/work/greta-phone.jpg" width="780" height="1688" alt="Dresses by Greta on a phone: the same photo and the name, with the menu and the bag at the top." data-i18n-attr="alt:gretaAlt2" loading="lazy" decoding="async"></div>
-              <figcaption class="plate__cap" data-i18n="gretaFig2">Fig. 6. On a phone.</figcaption>
-            </figure>
-          </div>
-        </div>
-      </article>
-      <div class="stack__dwell" aria-hidden="true"></div>
-    </div>

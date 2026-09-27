@@ -5,7 +5,8 @@
 // from here, typed by a person: nothing is ever invented. The one part that
 // starts on is the rate card, with the menu (shared/menu.js), asked for on
 // 2026-09-26 so the prices are on the site before anyone signs in; the admin
-// can change every line of it, or switch it off.
+// can change every line of it, or switch it off. The lines ticked as the best
+// options (2026-09-28) are offered first, on the front page.
 import { MENU, MENU_CURRENCY } from './menu.js';
 
 export const PLACEHOLDER_EMAIL = 'hello@example.invalid';
@@ -159,7 +160,7 @@ export function clean(input, current = defaults()) {
     if (!name.en && !name.sq) errors[`rates.items.${i}.name`] = 'required';
     if (p === null) errors[`rates.items.${i}.price`] = 'price';
     const group = RATE_GROUPS.includes(it?.group) ? it.group : '';
-    out.rates.items.push({ id: cleanId(it?.id), name, desc, price: p ?? 0, from: it?.from === true, group, unit });
+    out.rates.items.push({ id: cleanId(it?.id), name, desc, price: p ?? 0, from: it?.from === true, best: it?.best === true, group, unit });
   });
 
   const kept = cur.portrait && typeof cur.portrait === 'object' ? cur.portrait : {};
@@ -256,7 +257,7 @@ export function publicView(s) {
       ? {
           currency: s.rates.currency,
           note: s.rates.note,
-          items: s.rates.items.filter((i) => i.name.en || i.name.sq).map(({ name, desc, price: p, from, group, unit }) => ({ name, desc, price: p, from, group, unit })),
+          items: s.rates.items.filter((i) => i.name.en || i.name.sq).map(({ name, desc, price: p, from, best, group, unit }) => ({ name, desc, price: p, from, best, group, unit })),
         }
       : null,
     portrait: on('portrait') ? { src: `/${s.portrait.key}`, w: s.portrait.w, h: s.portrait.h, caption: s.portrait.caption } : null,
@@ -269,10 +270,18 @@ export function publicView(s) {
   };
 }
 
+// the menu's best options, by group and English name
+const MENU_BEST = new Set(MENU.filter((it) => it.best).map((it) => `${it.group}|${it.name.en}`));
+
 /** Stored settings (maybe from an older version, maybe partial) laid over the defaults. */
 export function merged(stored) {
   if (!stored || typeof stored !== 'object') return defaults();
   const { value } = clean(stored, stored);
   value.updatedAt = typeof stored.updatedAt === 'string' ? stored.updatedAt : '';
+  // rates saved before there were best options take the menu's: its lines, where they are still on the card
+  const items = Array.isArray(stored.rates?.items) ? stored.rates.items : [];
+  if (!items.some((it) => it && typeof it === 'object' && 'best' in it)) {
+    value.rates.items.forEach((it) => { it.best = MENU_BEST.has(`${it.group}|${it.name.en}`); });
+  }
   return value;
 }

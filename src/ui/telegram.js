@@ -36,9 +36,9 @@ export function initTelegram() {
   };
   pickLang();
 
-  // a list sent from the price calculator (?rates=0,2) opens the message; the rest is the visitor's
+  // a list sent from the price calculator, or a best option asked for (?rates=0,2), opens the message; the rest is the visitor's
   const picked = (new URLSearchParams(location.search).get('rates') || '').split(',').filter((v) => /^\d{1,2}$/.test(v)).map(Number);
-  if (picked.length && has('calculator') && !msg.value.trim()) msg.value = orderText(state.T, state.lang, picked);
+  if (picked.length && has('rates') && !msg.value.trim()) msg.value = orderText(state.T, state.lang, picked);
 
   // With visits counted, the site also counts telegrams begun (once a page, a
   // number and nothing else), so that the admin can set them against those sent.

@@ -6,23 +6,27 @@
 // Five lines were added on 2026-09-25 at estimated prices, not confirmed: fixing
 // a site, the full identity, the flyer or poster, the posting calendar and the
 // email campaign.
-const r = (group, price, name, desc, unit) => ({ group, price, from: true, name, desc, unit: unit || { en: '', sq: '', it: '' } });
+const r = (group, price, name, desc, unit) => ({ group, price, from: true, best: false, name, desc, unit: unit || { en: '', sq: '', it: '' } });
+// the best options: the lines the front page offers first (2026-09-28), ticked
+// in the admin; the menu starts with a site to begin with, the business's site
+// (like barmartiri.com) and the online shop (like elixir.al)
+const best = (it) => ({ ...it, best: true });
 
 export const MENU_CURRENCY = 'EUR';
 
 export const MENU = [
-  r('sites', 150,
+  best(r('sites', 150,
     { en: 'The front page', sq: 'Faqja e parë', it: 'La prima pagina' },
-    { en: 'A single page: buttons for WhatsApp and the phone, and a map on Google.', sq: 'Një faqe e vetme: butona për WhatsApp dhe telefon, harta në Google.', it: 'Una pagina sola: pulsanti per WhatsApp e il telefono, e la mappa su Google.' }),
-  r('sites', 400,
+    { en: 'A single page: buttons for WhatsApp and the phone, and a map on Google.', sq: 'Një faqe e vetme: butona për WhatsApp dhe telefon, harta në Google.', it: 'Una pagina sola: pulsanti per WhatsApp e il telefono, e la mappa su Google.' })),
+  best(r('sites', 400,
     { en: 'The business', sq: 'Biznesi', it: 'L’attività' },
-    { en: '4 to 6 pages in up to three languages, a menu or price list, a gallery and a Google Maps profile. Like barmartiri.com.', sq: '4–6 faqe, deri në tri gjuhë, menu ose çmimore, galeri, profil në Google Maps. Si barmartiri.com.', it: 'Da 4 a 6 pagine, fino a tre lingue, menù o listino, galleria e profilo su Google Maps. Come barmartiri.com.' }),
+    { en: '4 to 6 pages in up to three languages, a menu or price list, a gallery and a Google Maps profile. Like barmartiri.com.', sq: '4–6 faqe, deri në tri gjuhë, menu ose çmimore, galeri, profil në Google Maps. Si barmartiri.com.', it: 'Da 4 a 6 pagine, fino a tre lingue, menù o listino, galleria e profilo su Google Maps. Come barmartiri.com.' })),
   r('sites', 1000,
     { en: 'Premium', sq: 'Premium', it: 'Premium' },
     { en: 'A design all its own, with motion, like this site: the one that sets you apart.', sq: 'Dizajn unik me animacion, si kjo faqe: faqja që të dallon nga të tjerët.', it: 'Un design tutto suo, con animazioni, come questo sito: quello che ti distingue dagli altri.' }),
-  r('sites', 1200,
+  best(r('sites', 1200,
     { en: 'The online shop', sq: 'Dyqani online', it: 'Il negozio online' },
-    { en: 'A product catalogue, a basket, and orders by WhatsApp or cash on delivery. Like elixir.al.', sq: 'Katalog produktesh, shportë, porosi me WhatsApp ose pagesë në dorëzim. Si elixir.al.', it: 'Catalogo prodotti, carrello, ordini via WhatsApp o pagamento alla consegna. Come elixir.al.' }),
+    { en: 'A product catalogue, a basket, and orders by WhatsApp or cash on delivery. Like elixir.al.', sq: 'Katalog produktesh, shportë, porosi me WhatsApp ose pagesë në dorëzim. Si elixir.al.', it: 'Catalogo prodotti, carrello, ordini via WhatsApp o pagamento alla consegna. Come elixir.al.' })),
   r('sites', 2500,
     { en: 'The shop with a panel', sq: 'Dyqani me panel', it: 'Il negozio con pannello' },
     { en: 'A panel for products and orders, an email for every order, and card payments through the bank.', sq: 'Panel për produktet dhe porositë, email për çdo porosi, pagesë me kartë përmes bankës.', it: 'Un pannello per prodotti e ordini, un’email per ogni ordine, pagamento con carta tramite la banca.' }),
